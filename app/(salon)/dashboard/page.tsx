@@ -1,7 +1,7 @@
 "use client"
 import React from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Package, Users, Calendar, TrendingUp, DollarSign, Scissors } from 'lucide-react'
+import { Package, Users, Calendar, DollarSign, Scissors } from 'lucide-react'
 
 const stats = [
     {

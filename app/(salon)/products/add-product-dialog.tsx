@@ -67,7 +67,7 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
     const [imageUploading, setImageUploading] = useState(false);
     const [imageUploadProgress, setImageUploadProgress] = useState<number>(0);
     const [imageUrl, setImageUrl] = useState<string>("");
-
+    console.log(imageFile);
     const form = useForm<ProductFormValues>({
         resolver: zodResolver(productFormSchema),
         defaultValues: {
@@ -187,7 +187,7 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
                 <DialogHeader>
                     <DialogTitle>Add New Product</DialogTitle>
                     <DialogDescription>
-                        Fill in the details below to create a new product. Click save when you're done.
+                        Fill in the details below to create a new product. Click save when you are done.
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>

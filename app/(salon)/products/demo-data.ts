@@ -13,7 +13,8 @@ export const demoProducts: Product[] = [
         created_at: "2025-06-19T10:00:20.052593Z",
         updated_at: "2025-06-19T10:00:20.052615Z",
         category: 1,
-        sub_category: null
+        sub_category: null,
+        price: 200
     },
     {
         id: 2,
@@ -27,7 +28,8 @@ export const demoProducts: Product[] = [
         created_at: "2025-06-18T15:30:10.123456Z",
         updated_at: "2025-06-18T15:30:10.123456Z",
         category: 2,
-        sub_category: 1
+        sub_category: 1,
+        price: 400
     },
     {
         id: 3,
@@ -41,7 +43,8 @@ export const demoProducts: Product[] = [
         created_at: "2025-06-17T09:15:45.789012Z",
         updated_at: "2025-06-17T09:15:45.789012Z",
         category: 3,
-        sub_category: 2
+        sub_category: 2,
+        price: 300
     },
     {
         id: 4,
@@ -55,7 +58,8 @@ export const demoProducts: Product[] = [
         created_at: "2025-06-16T14:20:30.456789Z",
         updated_at: "2025-06-16T14:20:30.456789Z",
         category: 1,
-        sub_category: null
+        sub_category: null,
+        price: 100
     },
     {
         id: 5,
@@ -69,7 +73,8 @@ export const demoProducts: Product[] = [
         created_at: "2025-06-15T11:45:22.345678Z",
         updated_at: "2025-06-15T11:45:22.345678Z",
         category: 2,
-        sub_category: 3
+        sub_category: 3,
+        price: 500
     },
     {
         id: 6,
@@ -83,7 +88,8 @@ export const demoProducts: Product[] = [
         created_at: "2025-06-14T16:10:15.234567Z",
         updated_at: "2025-06-14T16:10:15.234567Z",
         category: 4,
-        sub_category: 4
+        sub_category: 4,
+        price: 1000
     },
     {
         id: 7,
@@ -97,7 +103,8 @@ export const demoProducts: Product[] = [
         created_at: "2025-06-13T20:30:40.123456Z",
         updated_at: "2025-06-13T20:30:40.123456Z",
         category: 2,
-        sub_category: 1
+        sub_category: 1,
+        price: 500
     },
     {
         id: 8,
@@ -111,6 +118,7 @@ export const demoProducts: Product[] = [
         created_at: "2025-06-12T13:25:35.678901Z",
         updated_at: "2025-06-12T13:25:35.678901Z",
         category: 3,
-        sub_category: 5
+        sub_category: 5,
+        price: 100
     }
 ] 

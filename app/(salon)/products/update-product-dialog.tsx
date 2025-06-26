@@ -12,7 +12,6 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog"
 import {
     Form,
@@ -34,11 +33,8 @@ import {
 } from "@/components/ui/select"
 import { get_product_categories, ProductCategory } from "@/lib/api/category/category_api";
 import { Switch } from "@/components/ui/switch"
-import { Plus } from "lucide-react"
 import { toast } from "sonner"
-import { add_product } from "@/lib/api/products/add_product"
 import { Product } from "./columns"
-import { Update } from "next/dist/build/swc/types"
 import { update_product } from "@/lib/api/products/update_product"
 import { upload_product_image } from "@/lib/api/products/upload_image"
 
@@ -72,6 +68,8 @@ export function UpdateProductDialog({ open, setOpen, onProductUpdated, product }
     const [imageUploading, setImageUploading] = useState(false);
     const [imageUploadProgress, setImageUploadProgress] = useState<number>(0);
     const [imageUrl, setImageUrl] = useState<string>(product?.image || "");
+
+    console.log(imageFile);
 
     const form = useForm<ProductFormValues>({
         resolver: zodResolver(productFormSchema),
@@ -208,7 +206,7 @@ export function UpdateProductDialog({ open, setOpen, onProductUpdated, product }
                 <DialogHeader>
                     <DialogTitle>Update Product</DialogTitle>
                     <DialogDescription>
-                        Fill in the details below to create a new product. Click save when you're done.
+                        Fill in the details below to create a new product. Click save when you are done.
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>

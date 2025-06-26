@@ -8,7 +8,6 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { demoProducts } from './demo-data'
 import { AddProductDialog } from './add-product-dialog'
 import { UpdateProductDialog } from './update-product-dialog'
-import { upload_product_image } from '@/lib/api/products/upload_image'
 
 const Page = () => {
     const [products, setProducts] = useState<Product[]>([])

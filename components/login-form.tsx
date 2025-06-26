@@ -21,9 +21,11 @@ export function LoginForm({
         const response = await login(email, password)
         console.log(response)
         if (response.success) {
-            localStorage.setItem("access-tmsadmin", response.data.access)
-            localStorage.setItem("refresh-tmsadmin", response.data.refresh)
-            window.location.href = "/"
+            if (response.data) {
+                localStorage.setItem("access-tmsadmin", response.data.access)
+                localStorage.setItem("refresh-tmsadmin", response.data.refresh)
+                window.location.href = "/"
+            }
         } else {
             setError(response.message)
         }

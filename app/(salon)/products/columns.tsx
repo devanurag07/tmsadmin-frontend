@@ -15,7 +15,6 @@ import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { delete_product } from "@/lib/api/products/delete_product"
 import { toast } from "sonner"
-import { setDefaultResultOrder } from "dns"
 
 export type Product = {
     id: number
