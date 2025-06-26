@@ -2,9 +2,6 @@ import { Product } from "@/app/(salon)/products/columns";
 import api from "../axios_api";
 import { ADD_PRODUCT_URL } from "../constants";
 import { ApiResponse } from "../response";
-import { responseCookiesToRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
-import { flightRouterStateSchema } from "next/dist/server/app-render/types";
-
 interface CreateProductData {
     name: string,
     brand: string,

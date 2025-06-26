@@ -16,6 +16,7 @@ export const login = async (email: string, password: string): Promise<ApiRespons
             }
         }
     } catch (error) {
+        console.log(error)
         return {
             success: false,
             status: 400,

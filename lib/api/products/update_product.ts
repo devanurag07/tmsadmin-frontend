@@ -1,6 +1,6 @@
 import { Product } from "@/app/(salon)/products/columns";
 import api from "../axios_api";
-import { ADD_PRODUCT_URL, GET_UPDATE_PRODUCT_URL } from "../constants";
+import { GET_UPDATE_PRODUCT_URL } from "../constants";
 import { ApiResponse } from "../response";
 
 interface UpdateProductData {

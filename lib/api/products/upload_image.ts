@@ -2,12 +2,6 @@ import api from "../axios_api";
 import { GET_IMAGE_UPLOAD_URL } from "../constants";
 
 
-
-const capitzalizeFirstLetter = (str: string) => {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
-
 export const upload_product_image = async (file: File, product_id: number, onProgress?: (percent: number) => void) => {
     try {
         const filename = file.name;
