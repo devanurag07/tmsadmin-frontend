@@ -70,7 +70,7 @@ export function UpdateProductDialog({ open, setOpen, onProductUpdated, product }
     const [imageUploadProgress, setImageUploadProgress] = useState<number>(0);
     const [imageUrl, setImageUrl] = useState<string>(product?.image || "");
 
-
+    console.log(imageFile);
     const form = useForm<ProductFormValues>({
         resolver: zodResolver(productFormSchema),
         defaultValues: product ? {
