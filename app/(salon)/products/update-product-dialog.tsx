@@ -47,7 +47,8 @@ const productFormSchema = z.object({
     is_active: z.boolean(),
     category: z.string().min(1, "Category is required"),
     sub_category: z.string(),
-    price: z.number().min(1, "Price is required")
+    price: z.number().min(1, "Price is required"),
+    image: z.string().min(1, "Image is required")
 })
 
 type ProductFormValues = z.infer<typeof productFormSchema>
@@ -83,6 +84,7 @@ export function UpdateProductDialog({ open, setOpen, onProductUpdated, product }
             category: product.category.toString(),
             sub_category: product.sub_category?.toString(),
             price: product.price,
+            image: product.image ?? ""
         } : {
             name: "",
             brand: "",
@@ -135,6 +137,7 @@ export function UpdateProductDialog({ open, setOpen, onProductUpdated, product }
                 (uploadRes as any).data
             ) {
                 setImageUrl((uploadRes as any).data);
+                form.setValue('image', (uploadRes as any).data);
                 toast.success("Image uploaded successfully");
             } else {
                 setImageUrl("");
@@ -284,6 +287,9 @@ export function UpdateProductDialog({ open, setOpen, onProductUpdated, product }
                             {imageUrl && !imageUploading && (
                                 <span className="text-xs text-green-600">Image uploaded!</span>
                             )}
+                            <div className="error text-red-500">
+                                {form.getFieldState('image')?.error?.message}
+                            </div>
                         </div>
 
                         <div className="grid grid-cols-3 gap-4">
@@ -386,7 +392,7 @@ export function UpdateProductDialog({ open, setOpen, onProductUpdated, product }
                                 <FormItem>
                                     <FormLabel>Price</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Enter price" {...field} type="number" />
+                                        <Input placeholder="Enter price" {...field} type="number" onChange={(e) => field.onChange(Number.parseInt(e.target.value.replace(/[^0-9.]/g, '')))} />
                                     </FormControl>
                                 </FormItem>
 

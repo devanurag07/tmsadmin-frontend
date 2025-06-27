@@ -88,18 +88,28 @@ export const getProductColumns = ({
             header: "Image",
             cell: ({ row }) => {
                 const image = row.getValue("image") as string;
-                if (image.trim().length === 0) {
+                if (image) {
+
+                    if (image.trim().length === 0) {
+                        return <div className="flex items-center justify-center">
+                            <div className="h-12 w-12 rounded-full bg-gray-200 text-[.7em] text-gray-500 text-center flex items-center justify-center">
+                                No Image
+                            </div>
+                        </div>
+                    }
+                    return (
+                        <div className="flex items-center justify-center">
+                            <img src={image} alt="Product Image" className="h-12 w-12 rounded-full" />
+                        </div>
+                    )
+                }
+                else {
                     return <div className="flex items-center justify-center">
                         <div className="h-12 w-12 rounded-full bg-gray-200 text-[.7em] text-gray-500 text-center flex items-center justify-center">
                             No Image
                         </div>
                     </div>
                 }
-                return (
-                    <div className="flex items-center justify-center">
-                        <img src={image} alt="Product Image" className="h-12 w-12 rounded-full" />
-                    </div>
-                )
             },
             enableSorting: false,
         },

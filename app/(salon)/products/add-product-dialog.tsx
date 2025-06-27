@@ -38,7 +38,6 @@ import { Plus } from "lucide-react"
 import { toast } from "sonner"
 import { add_product } from "@/lib/api/products/add_product"
 import { upload_product_image } from "@/lib/api/products/upload_image"
-
 const productFormSchema = z.object({
     name: z.string().min(1, "Product name is required"),
     brand: z.string().min(1, "Brand is required"),
@@ -48,7 +47,8 @@ const productFormSchema = z.object({
     is_active: z.boolean(),
     category: z.string().min(1, "Category is required"),
     sub_category: z.string(),
-    price: z.number().min(1, "Price is required")
+    price: z.number(),
+    image: z.string().min(1, "Image is required")
 })
 
 type ProductFormValues = z.infer<typeof productFormSchema>
@@ -109,6 +109,7 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
             setImageUploading(true);
             setImageUploadProgress(0);
             setImageUrl("");
+
             const uploadRes = await upload_product_image(file, 0, (percent) => {
                 setImageUploadProgress(percent);
             });
@@ -122,6 +123,7 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
                 (uploadRes as any).data
             ) {
                 setImageUrl((uploadRes as any).data);
+                form.setValue('image', (uploadRes as any).data);
                 toast.success("Image uploaded successfully");
             } else {
                 setImageUrl("");
@@ -265,6 +267,9 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
                             {imageUrl && !imageUploading && (
                                 <span className="text-xs text-green-600">Image uploaded!</span>
                             )}
+                            <div className="error text-red-500">
+                                {form.getFieldState('image')?.error?.message}
+                            </div>
                         </div>
 
                         <div className="grid grid-cols-3 gap-4">
@@ -367,7 +372,7 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
                                 <FormItem>
                                     <FormLabel>Price</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Enter price" {...field} type="number" />
+                                        <Input placeholder="Enter price" {...field} onChange={(e) => field.onChange(Number.parseInt(e.target.value.replace(/[^0-9.]/g, '')))} type="number" />
                                     </FormControl>
                                 </FormItem>
 
