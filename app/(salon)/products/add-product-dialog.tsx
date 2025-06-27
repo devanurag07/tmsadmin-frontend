@@ -122,7 +122,10 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
                 (uploadRes as any).success &&
                 (uploadRes as any).data
             ) {
-                setImageUrl((uploadRes as any).data);
+
+                //escape the space and special characters
+                const imageUrl = encodeURI((uploadRes as any).data);
+                setImageUrl(imageUrl);
                 form.setValue('image', (uploadRes as any).data);
                 toast.success("Image uploaded successfully");
             } else {

@@ -70,7 +70,6 @@ export function UpdateProductDialog({ open, setOpen, onProductUpdated, product }
     const [imageUploadProgress, setImageUploadProgress] = useState<number>(0);
     const [imageUrl, setImageUrl] = useState<string>(product?.image || "");
 
-    console.log(imageFile);
 
     const form = useForm<ProductFormValues>({
         resolver: zodResolver(productFormSchema),
@@ -136,7 +135,9 @@ export function UpdateProductDialog({ open, setOpen, onProductUpdated, product }
                 (uploadRes as any).success &&
                 (uploadRes as any).data
             ) {
-                setImageUrl((uploadRes as any).data);
+                //escape the space and special characters
+                const imageUrl = encodeURI((uploadRes as any).data);
+                setImageUrl(imageUrl);
                 form.setValue('image', (uploadRes as any).data);
                 toast.success("Image uploaded successfully");
             } else {
