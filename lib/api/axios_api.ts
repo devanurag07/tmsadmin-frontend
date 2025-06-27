@@ -22,7 +22,7 @@ api.interceptors.response.use((response) => {
     if (error.response.status === 401) {
         localStorage.removeItem("access-tmsadmin")
         localStorage.removeItem("refresh-tmsadmin")
-        // window.location.href = "/login"
+        window.location.href = "/login"
     }
     return Promise.reject(error)
 })

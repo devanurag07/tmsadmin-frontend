@@ -4,24 +4,12 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
     Package,
-    Users,
-    Calendar,
-    Settings,
-    BarChart3,
     Menu,
     X,
-    Home,
-    Scissors
 } from 'lucide-react'
 
 const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: Home },
     { name: 'Products', href: '/products', icon: Package },
-    { name: 'Services', href: '/services', icon: Scissors },
-    { name: 'Customers', href: '/customers', icon: Users },
-    { name: 'Appointments', href: '/appointments', icon: Calendar },
-    { name: 'Analytics', href: '/analytics', icon: BarChart3 },
-    { name: 'Settings', href: '/settings', icon: Settings },
 ]
 
 export default function SalonLayout({
@@ -33,7 +21,7 @@ export default function SalonLayout({
     const pathname = usePathname()
 
     return (
-        <div className="flex h-screen bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden">
+        <div className="flex h-screen bg-t-to-br from-slate-50 to-slate-100 overflow-hidden">
             {/* Mobile sidebar overlay */}
             {sidebarOpen && (
                 <div
@@ -51,11 +39,11 @@ export default function SalonLayout({
                     {/* Brand Header */}
                     <div className="flex items-center justify-between p-6 border-b border-slate-200">
                         <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+                            <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center">
                                 <span className="text-white font-bold text-lg">T</span>
                             </div>
                             <div>
-                                <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                                <h1 className="text-xl font-bold bg-black bg-clip-text text-transparent">
                                     TryMyStyle
                                 </h1>
                                 <p className="text-xs text-slate-500 font-medium">Salon Admin</p>
@@ -80,7 +68,7 @@ export default function SalonLayout({
                                     className={`
                                         flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200
                                         ${isActive
-                                            ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md'
+                                            ? 'bg-gradient-to-r bg-black text-white shadow-md'
                                             : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                                         }
                                     `}
@@ -115,7 +103,7 @@ export default function SalonLayout({
                         </button>
                         <div className="flex items-center space-x-4">
                             <h2 className="text-lg font-semibold text-slate-800">
-                                {navigation.find(item => item.href === pathname)?.name || 'Dashboard'}
+                                {navigation.find(item => item.href === pathname)?.name || 'Home'}
                             </h2>
                         </div>
                         <div className="flex items-center space-x-3">
