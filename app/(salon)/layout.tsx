@@ -83,6 +83,16 @@ export default function SalonLayout({
 
                     {/* Footer */}
                     <div className="p-4 border-t border-slate-200">
+                        <button
+                            onClick={() => {
+                                localStorage.removeItem("access-tmsadmin");
+                                localStorage.removeItem("refresh-tmsadmin");
+                                window.location.href = "/login";
+                            }}
+                            className="w-full mb-2 px-4 py-2 bg-red-500 text-white rounded-lg text-sm font-medium hover:bg-red-600 transition-colors"
+                        >
+                            Logout
+                        </button>
                         <div className="text-xs text-slate-500 text-center">
                             © 2024 TryMyStyle
                         </div>
