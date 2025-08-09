@@ -6,10 +6,20 @@ import {
     Package,
     Menu,
     X,
+    Activity,
+    Camera,
+    Users,
+    User,
+    Palette,
 } from 'lucide-react'
-
+import { ThemeSwitcher } from '@/components/theme-provider'
+import logoWhite from "@/assets/logo/logo_white.webp";
+import Image from 'next/image'
 const navigation = [
-    { name: 'Products', href: '/products', icon: Package },
+    { name: 'Usage Analytics', href: '/usage', icon: Activity },
+    { name: 'Hairstyle Data', href: '/data', icon: Camera },
+    { name: 'Skin Analysis', href: '/skin-analysis', icon: Users },
+    { name: 'Profile', href: '/profile', icon: User },
 ]
 
 export default function SalonLayout({
@@ -21,40 +31,39 @@ export default function SalonLayout({
     const pathname = usePathname()
 
     return (
-        <div className="flex h-screen bg-t-to-br from-slate-50 to-slate-100 overflow-hidden">
+        <div className="flex h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 overflow-hidden">
             {/* Mobile sidebar overlay */}
             {sidebarOpen && (
                 <div
-                    className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
+                    className="fixed inset-0 z-40 bg-neutral-950 bg-opacity-50 lg:hidden"
                     onClick={() => setSidebarOpen(false)}
                 />
             )}
 
             {/* Sidebar */}
             <div className={`
-                fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white shadow-xl transform transition-transform duration-300 ease-in-out
+                fixed lg:static inset-y-0 left-0 z-50 w-64 shadow-xl transform transition-transform duration-300 ease-in-out
                 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-            `}>
+            `}
+                style={{ backgroundColor: 'var(--sidebar)' }}
+            >
                 <div className="flex flex-col h-full">
                     {/* Brand Header */}
-                    <div className="flex items-center justify-between p-6 border-b border-slate-200">
+                    <div className="flex items-center justify-between p-6 border-b border-sidebar-border gap-4">
                         <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center">
-                                <span className="text-white font-bold text-lg">T</span>
-                            </div>
-                            <div>
-                                <h1 className="text-xl font-bold bg-black bg-clip-text text-transparent">
-                                    TryMyStyle
-                                </h1>
-                                <p className="text-xs text-slate-500 font-medium">Salon Admin</p>
-                            </div>
+
+                            <Image src={logoWhite} alt='TryMyStyle Logo' />
+
                         </div>
-                        <button
-                            onClick={() => setSidebarOpen(false)}
-                            className="lg:hidden p-2 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100"
-                        >
-                            <X className="h-5 w-5" />
-                        </button>
+                        <div className="flex items-center space-x-2">
+                            <ThemeSwitcher />
+                            <button
+                                onClick={() => setSidebarOpen(false)}
+                                className="lg:hidden p-2 rounded-md text-white hover:text-white hover:bg-white/20"
+                            >
+                                <X className="h-5 w-5" />
+                            </button>
+                        </div>
                     </div>
 
                     {/* Navigation */}
@@ -68,10 +77,11 @@ export default function SalonLayout({
                                     className={`
                                         flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200
                                         ${isActive
-                                            ? 'bg-gradient-to-r bg-black text-white shadow-md'
-                                            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                                            ? 'bg-white shadow-sm'
+                                            : 'text-white hover:bg-white/20 hover:text-white'
                                         }
                                     `}
+                                    style={isActive ? { color: 'var(--primary)' } : {}}
                                     onClick={() => setSidebarOpen(false)}
                                 >
                                     <item.icon className="h-5 w-5" />
@@ -82,18 +92,19 @@ export default function SalonLayout({
                     </nav>
 
                     {/* Footer */}
-                    <div className="p-4 border-t border-slate-200">
+                    <div className="p-4 border-t border-sidebar-border">
                         <button
                             onClick={() => {
                                 localStorage.removeItem("access-tmsadmin");
                                 localStorage.removeItem("refresh-tmsadmin");
                                 window.location.href = "/login";
                             }}
-                            className="w-full mb-2 px-4 py-2 bg-red-500 text-white rounded-lg text-sm font-medium hover:bg-red-600 transition-colors"
+                            className="w-full mb-2 px-4 py-2 bg-white rounded-lg text-sm font-medium hover:bg-white/90 transition-colors"
+                            style={{ color: 'var(--primary)' }}
                         >
                             Logout
                         </button>
-                        <div className="text-xs text-slate-500 text-center">
+                        <div className="text-xs text-white/80 text-center">
                             © 2024 TryMyStyle
                         </div>
                     </div>
@@ -103,25 +114,7 @@ export default function SalonLayout({
             {/* Main Content */}
             <div className="flex-1 flex flex-col overflow-hidden">
                 {/* Top Bar */}
-                <div className="bg-white border-b border-slate-200 shadow-sm flex-shrink-0">
-                    <div className="flex items-center justify-between px-4 py-4">
-                        <button
-                            onClick={() => setSidebarOpen(true)}
-                            className="lg:hidden p-2 rounded-md text-slate-600 hover:bg-slate-100"
-                        >
-                            <Menu className="h-6 w-6" />
-                        </button>
-                        <div className="flex items-center space-x-4">
-                            <h2 className="text-lg font-semibold text-slate-800">
-                                {navigation.find(item => item.href === pathname)?.name || 'Home'}
-                            </h2>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center">
-                                <span className="text-sm font-medium text-slate-600">A</span>
-                            </div>
-                        </div>
-                    </div>
+                <div className="bg-background flex-shrink-0">
                 </div>
 
                 {/* Page Content */}

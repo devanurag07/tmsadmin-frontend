@@ -1,11 +1,9 @@
 import api from "../axios_api";
 import { ApiResponse } from "../response";
 
-
-
 export const login = async (email: string, password: string): Promise<ApiResponse<{ access: string, refresh: string } | null>> => {
     try {
-        const response = await api.post("/token/", { username: email, password: password })
+        const response = await api.post("/salon/token/", { username: email, password: password })
 
         if (response.status == 200) {
             return {

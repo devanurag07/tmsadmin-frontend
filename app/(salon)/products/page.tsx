@@ -71,11 +71,11 @@ const Page = () => {
                 <CardHeader>
                     <div className="flex items-center justify-between">
                         <div>
-                            <CardTitle className="text-2xl font-bold text-slate-800">Product Catalog</CardTitle>
-                            <CardDescription className="text-slate-600 mt-2">
+                            <CardTitle className="text-2xl font-bold text-foreground">Product Catalog</CardTitle>
+                            <CardDescription className="text-muted-foreground mt-2">
                                 Manage your TryMyStyle salon products with advanced sorting, filtering, and inventory control.
                                 {usingDemoData && (
-                                    <span className="block mt-2 text-amber-600 font-medium">
+                                    <span className="block mt-2 text-warning-600 font-medium">
                                         ⚠️ Using demo data - API connection failed
                                     </span>
                                 )}
@@ -86,11 +86,11 @@ const Page = () => {
                 </CardHeader>
                 <CardContent>
                     {error && !usingDemoData && (
-                        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                            <p className="text-red-700 text-sm font-medium">{error}</p>
+                        <div className="mb-6 p-4 bg-error-50 border border-error-200 rounded-lg">
+                            <p className="text-error-700 text-sm font-medium">{error}</p>
                             <button
                                 onClick={getProducts}
-                                className="mt-3 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-md hover:from-purple-700 hover:to-pink-700 transition-all duration-200 text-sm font-medium"
+                                className="mt-3 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-all duration-200 text-sm font-medium"
                             >
                                 Retry Connection
                             </button>

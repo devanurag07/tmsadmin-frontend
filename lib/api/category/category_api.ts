@@ -24,7 +24,7 @@ export interface ProductCategory {
 //fetch available categories of product 
 export const get_product_categories = async (): Promise<ApiResponse<Array<ProductCategory> | null>> => {
     try {
-        const response = await api.get("/categories/")
+        const response = await api.get("/salon/categories/")
         if (response.status == 200) {
             return {
                 status: response.status,
