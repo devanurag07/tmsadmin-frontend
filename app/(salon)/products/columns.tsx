@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { delete_product } from "@/lib/api/products/delete_product"
 import { toast } from "sonner"
+import Image from "next/image"
 
 export type Product = {
     id: number
@@ -99,7 +100,7 @@ export const getProductColumns = ({
                     }
                     return (
                         <div className="flex items-center justify-center">
-                            <img src={image} alt="Product Image" className="h-12 w-12 rounded-full" />
+                            <Image src={image} alt="Product Image" className="h-12 w-12 rounded-full" />
                         </div>
                     )
                 }

@@ -38,6 +38,7 @@ import { Plus } from "lucide-react"
 import { toast } from "sonner"
 import { add_product } from "@/lib/api/products/add_product"
 import { upload_product_image } from "@/lib/api/products/upload_image"
+import Image from "next/image"
 const productFormSchema = z.object({
     name: z.string().min(1, "Product name is required"),
     brand: z.string().min(1, "Brand is required"),
@@ -178,7 +179,7 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
 
     useEffect(() => {
         get_categories();
-    }, [''])
+    }, [])
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -254,7 +255,7 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
                                 disabled={loading || imageUploading}
                             />
                             {imagePreview && (
-                                <img src={imagePreview} alt="Preview" className="w-32 h-32 object-cover rounded border mt-2" />
+                                <Image src={imagePreview} alt="Preview" className="w-32 h-32 object-cover rounded border mt-2" />
                             )}
                             {imageUploading && (
                                 <div className="w-32 mt-2">

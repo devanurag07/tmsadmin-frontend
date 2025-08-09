@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Camera, Eye, Filter, Minus, Search, TrendingDown, TrendingUp } from "lucide-react"
+import { Camera, Eye, Minus, Search, TrendingDown, TrendingUp } from "lucide-react"
 import { getSkinResults, SkinMetric, SkinResultRecord } from "@/lib/api/skin/skin_results_api"
 
 type ParamKey =

@@ -3,42 +3,26 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import {
-    ChartContainer,
-    ChartTooltipContent,
-    ChartLegendContent
+    ChartContainer
 } from '@/components/ui/chart'
 import {
     LineChart,
     Line,
-    BarChart,
-    Bar,
-    AreaChart,
-    Area,
     XAxis,
     YAxis,
-    CartesianGrid,
-    ResponsiveContainer,
-    PieChart,
-    Pie,
-    Cell
+    CartesianGrid
 } from 'recharts'
 import {
     TrendingUp,
     TrendingDown,
-    Activity,
-    Users,
     Database,
-    Calendar,
     Clock,
-    BarChart3,
     Loader2
 } from 'lucide-react'
-import { getAnalyticsData, getAnalyticsByTimeRange, getEndpointAnalytics } from '@/lib/api/analytics/analytics_api'
+import { getAnalyticsData } from '@/lib/api/analytics/analytics_api'
 
 // Type definitions
 type DailyData = {

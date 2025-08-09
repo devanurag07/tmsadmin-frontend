@@ -4,7 +4,6 @@ import React, { useEffect, useMemo, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
 import { Camera, Clock, Image as ImageIcon, RefreshCw, Star, CheckCircle2, Hourglass } from "lucide-react"
 import { getSalonSessions, SalonSession } from "@/lib/api/salon/sessions_api"
 

@@ -195,7 +195,7 @@ export function UpdateProductDialog({ open, setOpen, onProductUpdated, product }
 
     useEffect(() => {
         get_categories();
-    }, [''])
+    }, [])
 
     useEffect(() => {
         if (product?.category) {

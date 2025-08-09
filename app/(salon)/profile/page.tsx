@@ -5,32 +5,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Switch } from '@/components/ui/switch'
 import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
 import {
-    User,
-    Mail,
-    Phone,
-    MapPin,
-    Calendar,
-    Settings,
-    Bell,
-    Shield,
-    CreditCard,
     Activity,
-    Camera,
     Edit,
-    Save,
-    Upload,
-    Trash2,
     Eye,
     EyeOff,
     Key,
-    Building,
-    Globe
+    Building
 } from 'lucide-react'
 import { getCurrentSalon, updateCurrentSalon, SalonData, UpdateSalonData } from '@/lib/api/salon/salon_api'
 import { changePassword, ChangePasswordData } from '@/lib/api/auth/change_password_api'

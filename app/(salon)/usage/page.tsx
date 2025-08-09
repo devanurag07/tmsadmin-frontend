@@ -411,7 +411,7 @@ const UsagePage = () => {
                                 <div>
                                     <h3 className="text-sm font-medium text-red-800">Usage Limit Warning</h3>
                                     <p className="text-sm text-red-700 mt-1">
-                                        You're approaching your usage limits. Consider upgrading your plan to avoid service interruption.
+                                        You&apos;re approaching your usage limits. Consider upgrading your plan to avoid service interruption.
                                     </p>
                                 </div>
                             </div>
@@ -425,7 +425,7 @@ const UsagePage = () => {
                                 <div>
                                     <h3 className="text-sm font-medium text-yellow-800">Usage Alert</h3>
                                     <p className="text-sm text-yellow-700 mt-1">
-                                        You're using more than 75% of your monthly limit. Monitor your usage to avoid hitting limits.
+                                        You&apos;re using more than 75% of your monthly limit. Monitor your usage to avoid hitting limits.
                                     </p>
                                 </div>
                             </div>

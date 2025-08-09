@@ -3,14 +3,11 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
-    Package,
-    Menu,
     X,
     Activity,
     Camera,
     Users,
     User,
-    Palette,
 } from 'lucide-react'
 import { ThemeSwitcher } from '@/components/theme-provider'
 import logoWhite from "@/assets/logo/logo_white.webp";
