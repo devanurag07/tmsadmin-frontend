@@ -10,6 +10,8 @@ export interface SkinMetric {
 
 export interface SkinResultRecord {
     id: number;
+    name: string | null;
+    phone_number: string | null;
     image: string;
     result: {
         skin_analysis: SkinMetric[];

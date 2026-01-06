@@ -19,20 +19,20 @@ To change the main brand colors, edit `lib/theme.ts`:
 ```typescript
 export const brandTheme = {
   primary: {
-    50: '#fef7ff',   // Lightest shade
-    100: '#fdeeff',
-    200: '#fbdfff',
-    300: '#f8c0ff',
-    400: '#f491ff',
-    500: '#ed5aff',   // Main brand color
-    600: '#d91af9',   // Primary brand color
-    700: '#b80dd6',
-    800: '#970eac',
-    900: '#7c0e8a',
-    950: '#4d0051',   // Darkest shade
+    50: "#fef7ff", // Lightest shade
+    100: "#fdeeff",
+    200: "#fbdfff",
+    300: "#f8c0ff",
+    400: "#f491ff",
+    500: "#ed5aff", // Main brand color
+    600: "#d91af9", // Primary brand color
+    700: "#b80dd6",
+    800: "#970eac",
+    900: "#7c0e8a",
+    950: "#4d0051", // Darkest shade
   },
   // ... other colors
-}
+};
 ```
 
 ### 2. Brand-Specific Colors
@@ -55,7 +55,7 @@ brand: {
 
 ### Current TryMyStyle Colors (30% Darker)
 
-- **Primary Teal**: `#0a6b5f` - Main brand color (30% darker)
+- **Primary Teal**: `#008585` - Main brand color
 - **Secondary Blue**: `#0a7a6a` - Supporting color (30% darker)
 - **Accent Pink**: `#9a2f9f` - Highlight color (30% darker)
 - **Success Green**: `#1a8a4a` - Success states (30% darker)
@@ -80,12 +80,12 @@ To add a new color scheme, add it to the `brandTheme` object:
 export const brandTheme = {
   // ... existing colors
   newColor: {
-    50: '#f0f9ff',
-    100: '#e0f2fe',
+    50: "#f0f9ff",
+    100: "#e0f2fe",
     // ... add all shades
-    950: '#082f49',
+    950: "#082f49",
   },
-}
+};
 ```
 
 ### 2. Updating CSS Variables
@@ -155,10 +155,10 @@ The application includes a theme switcher that supports:
 ### Adding Theme Switcher
 
 ```tsx
-import { ThemeSwitcher } from '@/components/theme-provider'
+import { ThemeSwitcher } from "@/components/theme-provider";
 
 // Use in any component
-<ThemeSwitcher />
+<ThemeSwitcher />;
 ```
 
 ## 📱 Responsive Design
@@ -201,12 +201,14 @@ To update the entire theme:
 ## 📋 Quick Reference
 
 ### File Locations
+
 - Theme config: `lib/theme.ts`
 - CSS variables: `app/globals.css`
 - Theme provider: `components/theme-provider.tsx`
 
 ### Key Colors (30% Darker)
-- Primary: `#0a6b5f`
+
+- Primary: `#008585`
 - Secondary: `#0a7a6a`
 - Accent: `#9a2f9f`
 - Success: `#1a8a4a`
@@ -214,9 +216,10 @@ To update the entire theme:
 - Error: `#cc3333`
 
 ### Common Classes
+
 - `bg-primary` - Primary background
 - `text-primary` - Primary text
 - `border-primary` - Primary border
 - `hover:bg-primary/90` - Hover state
 
-This theme system provides a consistent, professional appearance that reflects the TryMyStyle brand while maintaining flexibility for future customization. 
+This theme system provides a consistent, professional appearance that reflects the TryMyStyle brand while maintaining flexibility for future customization.

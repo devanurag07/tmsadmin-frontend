@@ -9,7 +9,7 @@ export const brandTheme = {
     200: '#80d9c9',
     300: '#4dcaa2',
     400: '#1abb7b',
-    500: '#0a6b5f',
+    500: '#008585',
     600: '#08554b',
     700: '#063f37',
     800: '#042923',
@@ -24,12 +24,12 @@ export const brandTheme = {
     200: '#80d9c9',
     300: '#4dcaa2',
     400: '#1abb7b',
-    500: '#007d7d', // Darker for dark mode
-    600: '#006b6b',
-    700: '#005959',
-    800: '#004747',
-    900: '#003535',
-    950: '#002323',
+    500: '#008585',
+    600: '#007373',
+    700: '#006161',
+    800: '#004f4f',
+    900: '#003d3d',
+    950: '#002b2b',
   },
 
   // Secondary Colors
@@ -124,7 +124,7 @@ export const brandTheme = {
 
   // Brand Specific Colors (30% darker)
   brand: {
-    primary: '#0a6b5f', // Main brand teal (30% darker)
+    primary: '#008585', // Main brand teal
     secondary: '#0a7a6a', // Brand blue (30% darker)
     accent: '#9a2f9f', // Brand pink (30% darker)
     dark: '#0f0f0f', // Darker text
