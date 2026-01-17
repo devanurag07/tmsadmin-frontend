@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/select";
 import {
   Camera,
+  Download,
   Eye,
   Minus,
   Search,
@@ -36,6 +37,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import {
+  exportSkinResults,
   getSkinResults,
   SkinMetric,
   SkinResultRecord,
@@ -72,6 +74,7 @@ const SkinAnalysisPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selected, setSelected] = useState<SkinResultRecord | null>(null);
+  const [exporting, setExporting] = useState<boolean>(false);
   const [filters, setFilters] = useState({
     searchTerm: "",
     param: "all" as "all" | ParamKey,
@@ -99,6 +102,17 @@ const SkinAnalysisPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleExport = async () => {
+    try {
+      setExporting(true);
+      await exportSkinResults();
+    } catch (error) {
+      setError("Failed to export skin analysis data");
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const filtered = useMemo(() => {
     const term = filters.searchTerm.trim().toLowerCase();
     return records.filter((r) => {
@@ -108,9 +122,7 @@ const SkinAnalysisPage = () => {
               m.name.toLowerCase().includes(term) ||
               m.analysis.toLowerCase().includes(term) ||
               m.suggestions.toLowerCase().includes(term)
-          ) ||
-          (r.name && r.name.toLowerCase().includes(term)) ||
-          (r.phone_number && r.phone_number.includes(term))
+          )
         : true;
       const inParam =
         filters.param === "all"
@@ -145,11 +157,19 @@ const SkinAnalysisPage = () => {
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Skin Analysis</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-black">Skin Analysis</h1>
           <p className="text-muted-foreground">
             Results and insights from AI skin analysis
           </p>
         </div>
+        <Button
+          onClick={handleExport}
+          disabled={exporting || loading}
+          // variant="outline"
+        >
+          <Download className="h-4 w-4 mr-2" />
+          {exporting ? "Exporting..." : "Export"}
+        </Button>
       </div>
 
       {error && (
@@ -273,7 +293,6 @@ const SkinAnalysisPage = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[200px]">Image</TableHead>
-                  <TableHead>Customer Info</TableHead>
                   <TableHead>Top Metrics</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -292,14 +311,6 @@ const SkinAnalysisPage = () => {
                       </div>
                       <div className="text-xs text-muted-foreground mt-2">
                         {new Date(r.created_at).toLocaleString()}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="space-y-1">
-                        <div className="font-medium">{r.name || "N/A"}</div>
-                        <div className="text-sm text-muted-foreground">
-                          {r.phone_number || "N/A"}
-                        </div>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -355,15 +366,7 @@ const SkinAnalysisPage = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-5xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="text-2xl font-bold">Skin Analysis Details</h2>
-                {selected.name && (
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {selected.name}
-                    {selected.phone_number && ` • ${selected.phone_number}`}
-                  </p>
-                )}
-              </div>
+              <h2 className="text-2xl font-bold">Skin Analysis Details</h2>
               <Button variant="outline" onClick={() => setSelected(null)}>
                 Close
               </Button>

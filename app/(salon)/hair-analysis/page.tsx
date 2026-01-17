@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/select";
 import {
   Camera,
+  Download,
   Eye,
   Minus,
   Search,
@@ -36,6 +37,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import {
+  exportHairResults,
   getHairResults,
   HairAttribute,
   HairResultRecord,
@@ -72,6 +74,7 @@ const HairAnalysisPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selected, setSelected] = useState<HairResultRecord | null>(null);
+  const [exporting, setExporting] = useState<boolean>(false);
   const [filters, setFilters] = useState({
     searchTerm: "",
     param: "all" as "all" | ParamKey,
@@ -99,6 +102,17 @@ const HairAnalysisPage = () => {
     fetchResults();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleExport = async () => {
+    try {
+      setExporting(true);
+      await exportHairResults();
+    } catch (error) {
+      setError("Failed to export hair analysis data");
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const filtered = useMemo(() => {
     const term = filters.searchTerm.trim().toLowerCase();
@@ -157,11 +171,18 @@ const HairAnalysisPage = () => {
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Hair Analysis</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-black">Hair Analysis</h1>
           <p className="text-muted-foreground">
             Results and insights from AI hair analysis
           </p>
         </div>
+        <Button
+          onClick={handleExport}
+          disabled={exporting || loading}
+        >
+          <Download className="h-4 w-4 mr-2" />
+          {exporting ? "Exporting..." : "Export"}
+        </Button>
       </div>
 
       {error && (

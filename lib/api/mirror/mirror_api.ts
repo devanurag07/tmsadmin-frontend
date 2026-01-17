@@ -93,3 +93,37 @@ export const getHairResults = async (): Promise<ApiResponse<HairResultRecord[] |
         data: null,
     };
 };
+
+// Export hair analysis results
+export const exportHairResults = async (): Promise<void> => {
+    try {
+        const response = await api.get("/salon/deep-hair-analysis/export/", {
+            responseType: "blob",
+        });
+
+        // Create a blob from the response
+        const blob = new Blob([response.data]);
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+
+        // Extract filename from content-disposition header if available
+        const contentDisposition = response.headers["content-disposition"];
+        let filename = "hair-analysis-export.xlsx"; // default filename
+        if (contentDisposition) {
+            const filenameMatch = contentDisposition.match(/filename="?(.+)"?/i);
+            if (filenameMatch) {
+                filename = filenameMatch[1];
+            }
+        }
+
+        link.setAttribute("download", filename);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error("Failed to export hair results:", error);
+        throw error;
+    }
+};

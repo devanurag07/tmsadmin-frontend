@@ -175,7 +175,7 @@ const DataPage = () => {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Salon Sessions</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-black">Salon Sessions</h1>
           <p className="text-muted-foreground">
             Browse sessions, results, prompts, and ratings
           </p>

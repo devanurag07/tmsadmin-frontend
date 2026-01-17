@@ -10,8 +10,6 @@ export interface SkinMetric {
 
 export interface SkinResultRecord {
     id: number;
-    name: string | null;
-    phone_number: string | null;
     image: string;
     result: {
         skin_analysis: SkinMetric[];
@@ -47,6 +45,40 @@ export const getSkinResults = async (): Promise<ApiResponse<SkinResultRecord[] |
         message: "Failed to fetch skin results",
         data: null,
     };
+};
+
+// Export skin analysis results
+export const exportSkinResults = async (): Promise<void> => {
+    try {
+        const response = await api.get("/skin/export/", {
+            responseType: "blob",
+        });
+
+        // Create a blob from the response
+        const blob = new Blob([response.data]);
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+
+        // Extract filename from content-disposition header if available
+        const contentDisposition = response.headers["content-disposition"];
+        let filename = "skin-analysis-export.xlsx"; // default filename
+        if (contentDisposition) {
+            const filenameMatch = contentDisposition.match(/filename="?(.+)"?/i);
+            if (filenameMatch) {
+                filename = filenameMatch[1];
+            }
+        }
+
+        link.setAttribute("download", filename);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error("Failed to export skin results:", error);
+        throw error;
+    }
 };
 
 
