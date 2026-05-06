@@ -10,8 +10,9 @@ interface CreateProductData {
     gender: "male" | "female" | "unisex",
     quantity: string,
     category: number,
-    sub_category: number
+    sub_category: number,
     price: number,
+    product_type: "skin" | "hair",
 }
 
 

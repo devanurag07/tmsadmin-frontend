@@ -31,6 +31,7 @@ export type Product = {
     category: number
     sub_category: number | null
     price: number
+    product_type: "skin" | "hair"
 }
 
 
@@ -100,7 +101,7 @@ export const getProductColumns = ({
                     }
                     return (
                         <div className="flex items-center justify-center">
-                            <Image src={image} alt="Product Image" className="h-12 w-12 rounded-full" />
+                            <Image src={image} alt="Product Image" className="h-12 w-12 rounded-full" width={400} height={400} />
                         </div>
                     )
                 }

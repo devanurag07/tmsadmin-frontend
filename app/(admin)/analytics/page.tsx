@@ -509,8 +509,8 @@ const AnalyticsPage = () => {
                   {timeRange === "daily"
                     ? "Date"
                     : timeRange === "weekly"
-                    ? "Week"
-                    : "Month"}
+                      ? "Week"
+                      : "Month"}
                 </TableHead>
                 <TableHead>Total Requests</TableHead>
                 <TableHead>Successful</TableHead>
@@ -527,8 +527,8 @@ const AnalyticsPage = () => {
                     {timeRange === "daily"
                       ? (item as DailyData).date
                       : timeRange === "weekly"
-                      ? (item as WeeklyData).week
-                      : (item as MonthlyData).month}
+                        ? (item as WeeklyData).week
+                        : (item as MonthlyData).month}
                   </TableCell>
                   <TableCell>{formatNumber(item.requests)}</TableCell>
                   <TableCell>{formatNumber(item.success)}</TableCell>
@@ -540,7 +540,7 @@ const AnalyticsPage = () => {
                   <TableCell>
                     <div className="flex items-center">
                       {index > 0 &&
-                      item.requests > currentData[index - 1].requests ? (
+                        item.requests > currentData[index - 1].requests ? (
                         <TrendingUp className="h-4 w-4 text-green-600" />
                       ) : (
                         <TrendingDown className="h-4 w-4 text-red-600" />

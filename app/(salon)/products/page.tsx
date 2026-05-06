@@ -21,7 +21,7 @@ const Page = () => {
         try {
             setLoading(true)
             setError(null)
-            const response = await api.get("/products/")
+            const response = await api.get("/salon/products/")
             setProducts(response.data)
             setUsingDemoData(false)
         } catch (err) {

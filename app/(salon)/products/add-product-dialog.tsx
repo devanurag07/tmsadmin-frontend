@@ -49,7 +49,8 @@ const productFormSchema = z.object({
     category: z.string().min(1, "Category is required"),
     sub_category: z.string(),
     price: z.number(),
-    image: z.string().min(1, "Image is required")
+    image: z.string().min(1, "Image is required"),
+    product_type: z.enum(["skin", "hair"]),
 })
 
 type ProductFormValues = z.infer<typeof productFormSchema>
@@ -81,6 +82,7 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
             category: "",
             price: 0,
             sub_category: "",
+            product_type: "hair",
         },
     })
 
@@ -156,7 +158,8 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
                 image: imageUrl,
                 quantity: data.quantity,
                 gender: data.gender,
-                price: data.price
+                price: data.price,
+                product_type: data.product_type,
             })
             if (response.success) {
                 onProductAdded();
@@ -255,7 +258,7 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
                                 disabled={loading || imageUploading}
                             />
                             {imagePreview && (
-                                <Image src={imagePreview} alt="Preview" className="w-32 h-32 object-cover rounded border mt-2" />
+                                <Image src={imagePreview} alt="Preview" className="w-32 h-32 object-cover rounded border mt-2"  width={400} height={400}/>
                             )}
                             {imageUploading && (
                                 <div className="w-32 mt-2">
@@ -301,6 +304,27 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
                             />
                             <FormField
                                 control={form.control}
+                                name="product_type"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Product Type</FormLabel>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select type" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="hair">Hair</SelectItem>
+                                                <SelectItem value="skin">Skin</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
                                 name="quantity"
                                 render={({ field }) => (
                                     <FormItem>
@@ -312,6 +336,9 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
                                     </FormItem>
                                 )}
                             />
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-4">
                             <FormField
                                 control={form.control}
                                 name="category"

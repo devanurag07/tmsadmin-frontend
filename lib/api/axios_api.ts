@@ -1,8 +1,8 @@
 import axios from "axios"
 
 const api = axios.create({
-    // baseURL: "http://localhost:8000/api"
-    baseURL: "https://api.trymystyle.co.in/api"
+    baseURL: "http://localhost:8000/api"
+    // baseURL: "https://api.trymystyle.co.in/api"
     // baseURL: "http://168.231.121.244:8000/api"
 })
 
@@ -23,7 +23,7 @@ api.interceptors.response.use((response) => {
     if (error.response.status === 401) {
         localStorage.removeItem("access-tmsadmin")
         localStorage.removeItem("refresh-tmsadmin")
-        window.location.href = "/login"
+        // window.location.href = "/login"
     }
     return Promise.reject(error)
 })

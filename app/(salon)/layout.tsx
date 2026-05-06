@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { X, Activity, Camera, FileImage, Users, User, Scissors } from "lucide-react";
+import { X, Activity, Camera, FileImage, Users, User, Scissors, ShoppingCart } from "lucide-react";
 import { ThemeSwitcher } from "@/components/theme-provider";
 import logoWhite from "@/assets/logo/logo_white.webp";
 import Image from "next/image";
@@ -10,6 +10,7 @@ const navigation = [
   { name: "Usage Analytics", href: "/usage", icon: Activity },
   { name: "Results", href: "/results", icon: FileImage },
   { name: "Hairstyle Data", href: "/data", icon: Camera },
+  { name: "Products", href: "/products", icon: ShoppingCart },
   { name: "Skin Analysis", href: "/skin-analysis", icon: Users },
   { name: "Hair Analysis", href: "/hair-analysis", icon: Scissors },
   { name: "Profile", href: "/profile", icon: User },
@@ -37,11 +38,10 @@ export default function SalonLayout({
       <div
         className={`
                 fixed lg:static inset-y-0 left-0 z-50 w-64 shadow-xl transform transition-transform duration-300 ease-in-out
-                ${
-                  sidebarOpen
-                    ? "translate-x-0"
-                    : "-translate-x-full lg:translate-x-0"
-                }
+                ${sidebarOpen
+            ? "translate-x-0"
+            : "-translate-x-full lg:translate-x-0"
+          }
                 bg-sidebar text-sidebar-foreground
             `}
       >
@@ -72,11 +72,10 @@ export default function SalonLayout({
                   href={item.href}
                   className={`
                                         flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200
-                                        ${
-                                          isActive
-                                            ? "bg-sidebar-accent text-sidebar-foreground shadow-sm"
-                                            : "text-sidebar-foreground/90 hover:bg-sidebar-accent hover:text-sidebar-foreground"
-                                        }
+                                        ${isActive
+                      ? "bg-sidebar-accent text-sidebar-foreground shadow-sm"
+                      : "text-sidebar-foreground/90 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+                    }
                                     `}
                   onClick={() => setSidebarOpen(false)}
                 >
