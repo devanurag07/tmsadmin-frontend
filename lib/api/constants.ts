@@ -8,3 +8,5 @@ export const GET_DELETE_PRODUCT_URL = (product_id: number) => {
 export const GET_UPDATE_PRODUCT_URL = (product_id: number) => {
     return `/salon/products/${product_id}/`
 }
+
+// comment
