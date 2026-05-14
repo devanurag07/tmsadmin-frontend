@@ -359,10 +359,10 @@ const UsagePage = () => {
   }
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6">
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Usage Analytics</h1>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Usage Analytics</h1>
           <p className="text-muted-foreground">
             Monitor your API usage and performance metrics
           </p>

@@ -19,15 +19,15 @@ export function DataTableToolbar<TData>({
     const isFiltered = table.getState().columnFilters.length > 0
 
     return (
-        <div className="flex items-center justify-between">
-            <div className="flex flex-1 items-center space-x-2">
+        <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start md:justify-between">
+            <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
                 <Input
                     placeholder="Filter products..."
                     value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
                     onChange={(event) =>
                         table.getColumn("name")?.setFilterValue(event.target.value)
                     }
-                    className="h-8 w-[150px] lg:w-[250px]"
+                    className="h-9 min-w-0 w-full sm:h-8 sm:max-w-[200px] md:max-w-[280px]"
                 />
                 {table.getColumn("brand") && (
                     <DataTableFacetedFilter
@@ -64,7 +64,7 @@ export function DataTableToolbar<TData>({
                     <Button
                         variant="ghost"
                         onClick={() => table.resetColumnFilters()}
-                        className="h-8 px-2 lg:px-3"
+                        className="h-9 shrink-0 px-2 sm:h-8 lg:px-3"
                     >
                         Reset
                         <Cross2Icon className="ml-2 h-4 w-4" />

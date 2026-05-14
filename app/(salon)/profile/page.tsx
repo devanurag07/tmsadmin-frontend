@@ -271,20 +271,18 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Profile Settings
-          </h1>
-          <p className="text-muted-foreground">
-            Manage your account settings and preferences
-          </p>
-        </div>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          Profile Settings
+        </h1>
+        <p className="text-muted-foreground">
+          Manage your account settings and preferences
+        </p>
       </div>
 
-      <div className="image-section shadow-md p-6 bg-white border rounded-2xl">
-        <div className="img flex justify-between items-center gap-10">
+      <div className="image-section rounded-2xl border bg-white p-4 shadow-md sm:p-6">
+        <div className="img flex flex-col items-center gap-8 md:flex-row md:items-center md:justify-between md:gap-10">
           {/* Current Logo */}
           <div className="flex flex-col items-center">
             <span className="font-semibold mb-2 text-gray-500">Current</span>
@@ -304,8 +302,8 @@ const ProfilePage = () => {
             </div>
           </div>
           {/* Arrow or Preview Switch */}
-          <div className="flex flex-col items-center mx-2">
-            <span className="material-symbols-outlined text-3xl text-gray-400 select-none">
+          <div className="flex flex-col items-center md:mx-2">
+            <span className="material-symbols-outlined rotate-90 text-3xl text-gray-400 select-none md:rotate-0">
               &#8594;
             </span>
             <span className="sr-only">to</span>
@@ -337,7 +335,7 @@ const ProfilePage = () => {
               }
             }}
           />
-          <div className="button flex flex-col justify-between">
+          <div className="button flex w-full max-w-xs flex-col gap-3 md:w-auto md:max-w-none md:justify-between">
             <Button
               onClick={() => {
                 handleInputImage();
@@ -347,7 +345,6 @@ const ProfilePage = () => {
             </Button>
 
             <Button
-              className="mt-10"
               onClick={() => {
                 updateImage();
               }}

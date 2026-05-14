@@ -326,20 +326,20 @@ const AnalyticsPage = () => {
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="min-h-screen space-y-6 px-3 py-4 sm:px-6 sm:py-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
             Analytics Dashboard
           </h1>
           <p className="text-muted-foreground">
             Monitor API request usage and performance metrics
           </p>
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-2">
           <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Select time range" />
             </SelectTrigger>
             <SelectContent>
@@ -502,6 +502,7 @@ const AnalyticsPage = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          <div className="overflow-x-auto -mx-2 px-2 sm:mx-0 sm:px-0">
           <Table>
             <TableHeader>
               <TableRow>
@@ -551,6 +552,7 @@ const AnalyticsPage = () => {
               ))}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

@@ -16,6 +16,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { delete_product } from "@/lib/api/products/delete_product"
 import { toast } from "sonner"
 import Image from "next/image"
+import { cn } from "@/lib/utils"
 
 export type Product = {
     id: number
@@ -32,6 +33,63 @@ export type Product = {
     sub_category: number | null
     price: number
     product_type: "skin" | "hair"
+}
+
+export function ProductActionsMenu({
+    product,
+    onProductDeleted,
+    setOpenEdit,
+    setEditProduct,
+    triggerClassName,
+}: {
+    product: Product
+    onProductDeleted: () => void
+    setOpenEdit: React.Dispatch<React.SetStateAction<boolean>>
+    setEditProduct: React.Dispatch<React.SetStateAction<Product | null>>
+    triggerClassName?: string
+}) {
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button
+                    variant="ghost"
+                    className={cn("h-8 w-8 p-0 touch-manipulation", triggerClassName)}
+                >
+                    <span className="sr-only">Open menu</span>
+                    <MoreHorizontal className="h-4 w-4" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuItem
+                    onClick={() => navigator.clipboard.writeText(product.id.toString())}
+                >
+                    Copy product ID
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>View details</DropdownMenuItem>
+                <DropdownMenuItem
+                    onClick={() => {
+                        setEditProduct(product)
+                        setOpenEdit(true)
+                    }}
+                >
+                    Edit product
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                    onClick={async () => {
+                        const response = await delete_product(product.id)
+                        if (response.success) {
+                            toast.success("Deleted Product Successfully")
+                            onProductDeleted()
+                        }
+                    }}
+                >
+                    Delete product
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
+    )
 }
 
 
@@ -254,39 +312,13 @@ export const getProductColumns = ({
             enableHiding: false,
             cell: ({ row }) => {
                 const product = row.original
-
                 return (
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem
-                                onClick={() => navigator.clipboard.writeText(product.id.toString())}
-                            >
-                                Copy product ID
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>View details</DropdownMenuItem>
-                            <DropdownMenuItem onClick={async () => {
-                                //set product 
-                                setEditProduct(product);
-                                setOpenEdit(true);
-                                //set show update dialog
-                            }}>Edit product</DropdownMenuItem>
-                            <DropdownMenuItem onClick={async () => {
-                                const response = await delete_product(product.id);
-                                if (response.success) {
-                                    toast.success("Deleted Product Successfully")
-                                    onProductDeleted();
-                                }
-                            }}>Delete product</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    <ProductActionsMenu
+                        product={product}
+                        onProductDeleted={onProductDeleted}
+                        setOpenEdit={setOpenEdit}
+                        setEditProduct={setEditProduct}
+                    />
                 )
             },
         },

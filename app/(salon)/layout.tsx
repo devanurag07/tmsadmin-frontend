@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { X, Activity, Camera, FileImage, Users, User, Scissors, ShoppingCart } from "lucide-react";
+import { X, Activity, Camera, FileImage, Users, User, Scissors, ShoppingCart, Menu } from "lucide-react";
 import { ThemeSwitcher } from "@/components/theme-provider";
 import logoWhite from "@/assets/logo/logo_white.webp";
 import Image from "next/image";
@@ -25,7 +25,7 @@ export default function SalonLayout({
   const pathname = usePathname();
 
   return (
-    <div className="flex h-screen bg-linear-to-br from-neutral-50 to-neutral-100 overflow-hidden">
+    <div className="flex h-dvh max-h-dvh bg-linear-to-br from-neutral-50 to-neutral-100 overflow-hidden">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div
@@ -106,12 +106,26 @@ export default function SalonLayout({
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top Bar */}
-        <div className="bg-background shrink-0"></div>
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-background">
+        {/* Mobile top bar */}
+        <header className="flex shrink-0 items-center gap-3 border-b bg-background px-3 py-3 lg:hidden">
+          <button
+            type="button"
+            aria-label="Open navigation menu"
+            onClick={() => setSidebarOpen(true)}
+            className="inline-flex shrink-0 items-center justify-center rounded-md border border-border p-2 text-foreground hover:bg-muted touch-manipulation"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+          <span className="truncate text-sm font-semibold tracking-tight">
+            TryMyStyle Admin
+          </span>
+        </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        <main className="flex min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-x-none px-3 py-4 sm:px-6 sm:py-6">
+          {children}
+        </main>
       </div>
     </div>
   );

@@ -31,11 +31,23 @@ import { DataTableToolbar } from "./data-table-toolbar"
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
+    /** Narrow visible columns on viewports below md (products table). */
+    compactOnMobile?: boolean
+}
+
+const MOBILE_PRODUCT_COLUMN_VISIBILITY: VisibilityState = {
+    select: false,
+    id: false,
+    description: false,
+    gender: false,
+    quantity: false,
+    created_at: false,
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
+    compactOnMobile,
 }: DataTableProps<TData, TValue>) {
     const [rowSelection, setRowSelection] = React.useState({})
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -64,10 +76,23 @@ export function DataTable<TData, TValue>({
         getFacetedUniqueValues: getFacetedUniqueValues(),
     })
 
+    React.useLayoutEffect(() => {
+        if (!compactOnMobile) return
+        const mq = window.matchMedia("(max-width: 767px)")
+        const sync = () => {
+            setColumnVisibility(
+                mq.matches ? MOBILE_PRODUCT_COLUMN_VISIBILITY : {}
+            )
+        }
+        sync()
+        mq.addEventListener("change", sync)
+        return () => mq.removeEventListener("change", sync)
+    }, [compactOnMobile])
+
     return (
-        <div className="space-y-4">
+        <div className="w-full min-w-0 space-y-4">
             <DataTableToolbar table={table} />
-            <div className="rounded-md border">
+            <div className="w-full min-w-0 overflow-x-auto overflow-y-visible overscroll-x-contain rounded-md border touch-pan-x [-webkit-overflow-scrolling:touch]">
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
