@@ -42,6 +42,7 @@ import {
   HairAttribute,
   HairResultRecord,
 } from "@/lib/api/mirror/mirror_api";
+import { SalonAnalysisOverview } from "@/components/salon/SalonAnalysisOverview";
 
 type ParamKey =
   | "hair_density"
@@ -195,7 +196,11 @@ const HairAnalysisPage = () => {
         </Card>
       )}
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <SalonAnalysisOverview kind="hair" />
+
+      <div className="border-t pt-6 mt-2">
+        <h2 className="text-sm font-semibold mb-4">Per-result records</h2>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -472,6 +477,7 @@ const HairAnalysisPage = () => {
           )}
         </CardContent>
       </Card>
+      </div>
 
       {selected && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-0 sm:items-center sm:p-4">

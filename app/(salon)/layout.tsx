@@ -7,7 +7,7 @@ import { ThemeSwitcher } from "@/components/theme-provider";
 import logoWhite from "@/assets/logo/logo_white.webp";
 import Image from "next/image";
 const navigation = [
-  { name: "Usage Analytics", href: "/usage", icon: Activity },
+  { name: "Dashboard", href: "/usage", icon: Activity },
   { name: "Results", href: "/results", icon: FileImage },
   { name: "Hairstyle Data", href: "/data", icon: Camera },
   { name: "Products", href: "/products", icon: ShoppingCart },
@@ -123,7 +123,7 @@ export default function SalonLayout({
         </header>
 
         {/* Page Content */}
-        <main className="flex min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-x-none px-3 py-4 sm:px-6 sm:py-6">
+        <main className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto overscroll-x-none px-3 py-4 sm:px-6 sm:py-6">
           {children}
         </main>
       </div>
