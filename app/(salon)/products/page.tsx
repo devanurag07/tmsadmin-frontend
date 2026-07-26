@@ -25,8 +25,10 @@ const Page = () => {
         try {
             setLoading(true)
             setError(null)
-            const response = await api.get("/salon/products/")
-            setProducts(response.data)
+            // ?all=1 includes inactive products so the catalog can manage them
+            const response = await api.get("/salon/products/?all=1")
+            const payload = response.data?.data ?? response.data
+            setProducts(Array.isArray(payload) ? payload : [])
             setUsingDemoData(false)
         } catch (err) {
             console.error('Error fetching products:', err)
@@ -52,9 +54,10 @@ const Page = () => {
     const [mobileSearch, setMobileSearch] = useState("")
 
     const mobileFiltered = useMemo(() => {
+        const list = Array.isArray(products) ? products : []
         const t = mobileSearch.trim().toLowerCase()
-        if (!t) return products
-        return products.filter(
+        if (!t) return list
+        return list.filter(
             (p) =>
                 p.name.toLowerCase().includes(t) ||
                 p.brand.toLowerCase().includes(t) ||

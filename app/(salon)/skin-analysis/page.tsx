@@ -43,6 +43,7 @@ import {
   SkinResultRecord,
 } from "@/lib/api/skin/skin_results_api";
 import { SalonAnalysisOverview } from "@/components/salon/SalonAnalysisOverview";
+import { DownloadReportButton } from "@/components/salon/DownloadReportButton";
 
 type ParamKey =
   | "Acne"
@@ -79,6 +80,9 @@ const SkinAnalysisPage = () => {
   const [filters, setFilters] = useState({
     searchTerm: "",
     param: "all" as "all" | ParamKey,
+    fromDate: "",
+    toDate: "",
+    sortOrder: "newest" as "newest" | "oldest",
   });
 
   const fetchResults = async () => {
@@ -116,7 +120,14 @@ const SkinAnalysisPage = () => {
 
   const filtered = useMemo(() => {
     const term = filters.searchTerm.trim().toLowerCase();
-    return records.filter((r) => {
+    const fromMs = filters.fromDate
+      ? new Date(`${filters.fromDate}T00:00:00`).getTime()
+      : null;
+    const toMs = filters.toDate
+      ? new Date(`${filters.toDate}T23:59:59.999`).getTime()
+      : null;
+
+    const result = records.filter((r) => {
       const inText = term
         ? r.result.skin_analysis.some(
             (m) =>
@@ -129,7 +140,18 @@ const SkinAnalysisPage = () => {
         filters.param === "all"
           ? true
           : r.result.skin_analysis.some((m) => m.name === filters.param);
-      return inText && inParam;
+      const t = new Date(r.created_at).getTime();
+      const inDate =
+        (fromMs === null || Number.isNaN(t) || t >= fromMs) &&
+        (toMs === null || Number.isNaN(t) || t <= toMs);
+      return inText && inParam && inDate;
+    });
+
+    const dir = filters.sortOrder === "newest" ? -1 : 1;
+    return [...result].sort((a, b) => {
+      const at = new Date(a.created_at).getTime();
+      const bt = new Date(b.created_at).getTime();
+      return (at - bt) * dir;
     });
   }, [records, filters]);
 
@@ -240,7 +262,7 @@ const SkinAnalysisPage = () => {
       <Card>
         <CardHeader>
           <CardTitle>Filters</CardTitle>
-          <CardDescription>Search and filter by parameter</CardDescription>
+          <CardDescription>Search, filter by parameter and date, and sort</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid min-w-0 gap-4 sm:grid-cols-2 md:grid-cols-3">
@@ -286,6 +308,61 @@ const SkinAnalysisPage = () => {
                 </SelectContent>
               </Select>
             </div>
+            <div className="min-w-0 space-y-2">
+              <Label>Sort by date</Label>
+              <Select
+                value={filters.sortOrder}
+                onValueChange={(v: any) =>
+                  setFilters((prev) => ({ ...prev, sortOrder: v }))
+                }
+              >
+                <SelectTrigger className="h-10 w-full touch-manipulation">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="newest">Newest first</SelectItem>
+                  <SelectItem value="oldest">Oldest first</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="min-w-0 space-y-2">
+              <Label htmlFor="skin-from-date">From date</Label>
+              <Input
+                id="skin-from-date"
+                type="date"
+                value={filters.fromDate}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, fromDate: e.target.value }))
+                }
+                className="h-10 touch-manipulation"
+              />
+            </div>
+            <div className="min-w-0 space-y-2">
+              <Label htmlFor="skin-to-date">To date</Label>
+              <Input
+                id="skin-to-date"
+                type="date"
+                value={filters.toDate}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, toDate: e.target.value }))
+                }
+                className="h-10 touch-manipulation"
+              />
+            </div>
+            {(filters.fromDate || filters.toDate) && (
+              <div className="flex items-end">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="h-10"
+                  onClick={() =>
+                    setFilters((prev) => ({ ...prev, fromDate: "", toDate: "" }))
+                  }
+                >
+                  Clear dates
+                </Button>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -349,14 +426,22 @@ const SkinAnalysisPage = () => {
                           );
                         })}
                       </div>
-                      <Button
-                        variant="outline"
-                        size="lg"
-                        className="h-11 w-full touch-manipulation"
-                        onClick={() => setSelected(r)}
-                      >
-                        <Eye className="mr-2 h-4 w-4" /> View details
-                      </Button>
+                      <div className="flex flex-col gap-2 sm:flex-row">
+                        <Button
+                          variant="outline"
+                          size="lg"
+                          className="h-11 w-full touch-manipulation"
+                          onClick={() => setSelected(r)}
+                        >
+                          <Eye className="mr-2 h-4 w-4" /> View details
+                        </Button>
+                        <DownloadReportButton
+                          kind="skin"
+                          resultId={r.id}
+                          size="lg"
+                          className="w-full"
+                        />
+                      </div>
                     </CardContent>
                   </Card>
                 ))}
@@ -419,14 +504,17 @@ const SkinAnalysisPage = () => {
                           </div>
                         </TableCell>
                         <TableCell className="text-right">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-full sm:w-auto"
-                            onClick={() => setSelected(r)}
-                          >
-                            <Eye className="mr-2 h-4 w-4" /> View
-                          </Button>
+                          <div className="flex flex-col items-end gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="w-full sm:w-auto"
+                              onClick={() => setSelected(r)}
+                            >
+                              <Eye className="mr-2 h-4 w-4" /> View
+                            </Button>
+                            <DownloadReportButton kind="skin" resultId={r.id} />
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -444,9 +532,12 @@ const SkinAnalysisPage = () => {
           <div className="max-h-[min(90dvh,720px)] w-full max-w-5xl overflow-y-auto rounded-t-lg bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(0.75rem,env(safe-area-inset-top))] dark:bg-slate-900 sm:rounded-lg sm:p-6 sm:pb-6 sm:pt-6">
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <h2 className="text-xl font-bold sm:text-2xl">Skin Analysis Details</h2>
-              <Button variant="outline" className="shrink-0 sm:self-auto" onClick={() => setSelected(null)}>
-                Close
-              </Button>
+              <div className="flex shrink-0 gap-2 sm:self-auto">
+                <DownloadReportButton kind="skin" resultId={selected.id} />
+                <Button variant="outline" onClick={() => setSelected(null)}>
+                  Close
+                </Button>
+              </div>
             </div>
             <div className="grid gap-6 md:grid-cols-2">
               <div>

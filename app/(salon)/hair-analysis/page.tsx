@@ -43,6 +43,7 @@ import {
   HairResultRecord,
 } from "@/lib/api/mirror/mirror_api";
 import { SalonAnalysisOverview } from "@/components/salon/SalonAnalysisOverview";
+import { DownloadReportButton } from "@/components/salon/DownloadReportButton";
 
 type ParamKey =
   | "hair_density"
@@ -79,6 +80,9 @@ const HairAnalysisPage = () => {
   const [filters, setFilters] = useState({
     searchTerm: "",
     param: "all" as "all" | ParamKey,
+    fromDate: "",
+    toDate: "",
+    sortOrder: "newest" as "newest" | "oldest",
   });
 
   const fetchResults = async () => {
@@ -116,7 +120,14 @@ const HairAnalysisPage = () => {
 
   const filtered = useMemo(() => {
     const term = filters.searchTerm.trim().toLowerCase();
-    return records.filter((r) => {
+    const fromMs = filters.fromDate
+      ? new Date(`${filters.fromDate}T00:00:00`).getTime()
+      : null;
+    const toMs = filters.toDate
+      ? new Date(`${filters.toDate}T23:59:59.999`).getTime()
+      : null;
+
+    const result = records.filter((r) => {
       const hairAttributes = r?.result?.hair_attributes || [];
       const inText = term
         ? hairAttributes.some(
@@ -132,7 +143,18 @@ const HairAnalysisPage = () => {
         filters.param === "all"
           ? true
           : hairAttributes.some((m) => m.attribute === filters.param);
-      return inText && inParam;
+      const t = new Date(r.created_at).getTime();
+      const inDate =
+        (fromMs === null || Number.isNaN(t) || t >= fromMs) &&
+        (toMs === null || Number.isNaN(t) || t <= toMs);
+      return inText && inParam && inDate;
+    });
+
+    const dir = filters.sortOrder === "newest" ? -1 : 1;
+    return [...result].sort((a, b) => {
+      const at = new Date(a.created_at).getTime();
+      const bt = new Date(b.created_at).getTime();
+      return (at - bt) * dir;
     });
   }, [records, filters]);
 
@@ -259,7 +281,7 @@ const HairAnalysisPage = () => {
       <Card>
         <CardHeader>
           <CardTitle>Filters</CardTitle>
-          <CardDescription>Search and filter by parameter</CardDescription>
+          <CardDescription>Search, filter by parameter and date, and sort</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid min-w-0 gap-4 sm:grid-cols-2 md:grid-cols-3">
@@ -307,6 +329,61 @@ const HairAnalysisPage = () => {
                 </SelectContent>
               </Select>
             </div>
+            <div className="min-w-0 space-y-2 sm:col-span-1">
+              <Label>Sort by date</Label>
+              <Select
+                value={filters.sortOrder}
+                onValueChange={(v: any) =>
+                  setFilters((prev) => ({ ...prev, sortOrder: v }))
+                }
+              >
+                <SelectTrigger className="h-10 w-full touch-manipulation">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="newest">Newest first</SelectItem>
+                  <SelectItem value="oldest">Oldest first</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="min-w-0 space-y-2">
+              <Label htmlFor="from-date">From date</Label>
+              <Input
+                id="from-date"
+                type="date"
+                value={filters.fromDate}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, fromDate: e.target.value }))
+                }
+                className="h-10 touch-manipulation"
+              />
+            </div>
+            <div className="min-w-0 space-y-2">
+              <Label htmlFor="to-date">To date</Label>
+              <Input
+                id="to-date"
+                type="date"
+                value={filters.toDate}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, toDate: e.target.value }))
+                }
+                className="h-10 touch-manipulation"
+              />
+            </div>
+            {(filters.fromDate || filters.toDate) && (
+              <div className="flex items-end">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="h-10"
+                  onClick={() =>
+                    setFilters((prev) => ({ ...prev, fromDate: "", toDate: "" }))
+                  }
+                >
+                  Clear dates
+                </Button>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -378,14 +455,22 @@ const HairAnalysisPage = () => {
                             );
                           })}
                       </div>
-                      <Button
-                        variant="outline"
-                        size="lg"
-                        className="h-11 w-full touch-manipulation"
-                        onClick={() => setSelected(r)}
-                      >
-                        <Eye className="mr-2 h-4 w-4" /> View details
-                      </Button>
+                      <div className="flex flex-col gap-2 sm:flex-row">
+                        <Button
+                          variant="outline"
+                          size="lg"
+                          className="h-11 w-full touch-manipulation"
+                          onClick={() => setSelected(r)}
+                        >
+                          <Eye className="mr-2 h-4 w-4" /> View details
+                        </Button>
+                        <DownloadReportButton
+                          kind="hair"
+                          resultId={r.id}
+                          size="lg"
+                          className="w-full"
+                        />
+                      </div>
                     </CardContent>
                   </Card>
                 ))}
@@ -459,14 +544,17 @@ const HairAnalysisPage = () => {
                           </div>
                         </TableCell>
                         <TableCell className="text-right">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-full sm:w-auto"
-                            onClick={() => setSelected(r)}
-                          >
-                            <Eye className="mr-2 h-4 w-4" /> View
-                          </Button>
+                          <div className="flex flex-col items-end gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="w-full sm:w-auto"
+                              onClick={() => setSelected(r)}
+                            >
+                              <Eye className="mr-2 h-4 w-4" /> View
+                            </Button>
+                            <DownloadReportButton kind="hair" resultId={r.id} />
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -492,9 +580,12 @@ const HairAnalysisPage = () => {
                   </p>
                 )}
               </div>
-              <Button variant="outline" className="shrink-0" onClick={() => setSelected(null)}>
-                Close
-              </Button>
+              <div className="flex shrink-0 gap-2">
+                <DownloadReportButton kind="hair" resultId={selected.id} />
+                <Button variant="outline" onClick={() => setSelected(null)}>
+                  Close
+                </Button>
+              </div>
             </div>
             <div className="grid gap-6 md:grid-cols-2">
               <div>

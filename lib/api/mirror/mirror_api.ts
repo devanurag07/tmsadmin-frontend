@@ -94,6 +94,46 @@ export const getHairResults = async (): Promise<ApiResponse<HairResultRecord[] |
     };
 };
 
+export interface ReportTokenData {
+    id: number;
+    token: string;
+    expires_at: string;
+}
+
+/** Mints a fresh report token for a deep hair analysis result so its
+ * customer-facing PDF report (rendered by the FLUX app) can be downloaded
+ * from the admin, even long after the original analysis-time token expired. */
+export const generateHairReportToken = async (
+    resultId: number
+): Promise<ApiResponse<ReportTokenData | null>> => {
+    try {
+        const response = await api.post(`/salon/mirror/hair-results/${resultId}/report-token/`);
+        if (response.status === 200) {
+            return {
+                success: true,
+                status: response.status,
+                message: response.data.message ?? "Success",
+                data: response.data.data as ReportTokenData,
+            };
+        }
+    } catch (error) {
+        console.error("Failed to generate hair report token:", error);
+        return {
+            success: false,
+            status: 400,
+            message: "Failed to generate report token",
+            data: null,
+        };
+    }
+
+    return {
+        success: false,
+        status: 400,
+        message: "Failed to generate report token",
+        data: null,
+    };
+};
+
 // Export hair analysis results
 export const exportHairResults = async (): Promise<void> => {
     try {

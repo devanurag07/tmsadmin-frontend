@@ -47,6 +47,46 @@ export const getSkinResults = async (): Promise<ApiResponse<SkinResultRecord[] |
     };
 };
 
+export interface ReportTokenData {
+    id: number;
+    token: string;
+    expires_at: string;
+}
+
+/** Mints a fresh report token for a skin analysis result so its customer-facing
+ * PDF report (rendered by the FLUX app) can be downloaded from the admin,
+ * even long after the original analysis-time token has expired. */
+export const generateSkinReportToken = async (
+    resultId: number
+): Promise<ApiResponse<ReportTokenData | null>> => {
+    try {
+        const response = await api.post(`/skin/results/${resultId}/report-token/`);
+        if (response.status === 200) {
+            return {
+                success: true,
+                status: response.status,
+                message: response.data.message ?? "Success",
+                data: response.data.data as ReportTokenData,
+            };
+        }
+    } catch (error) {
+        console.error("Failed to generate skin report token:", error);
+        return {
+            success: false,
+            status: 400,
+            message: "Failed to generate report token",
+            data: null,
+        };
+    }
+
+    return {
+        success: false,
+        status: 400,
+        message: "Failed to generate report token",
+        data: null,
+    };
+};
+
 // Export skin analysis results
 export const exportSkinResults = async (): Promise<void> => {
     try {
