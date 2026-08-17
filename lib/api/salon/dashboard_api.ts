@@ -38,6 +38,7 @@ export interface VtoAnalytics {
   total_hairstyle_trials: number;
   total_haircolor_trials: number;
   total_beard_trials: number;
+  total_makeup_trials?: number;
   total_clothing_trials: number;
   total_trials: number;
   distinct_customers: number;
@@ -50,6 +51,15 @@ export interface VtoAnalytics {
   top_hairstyles: NameCount[];
   top_haircolors: NameCount[];
   top_beards: NameCount[];
+  top_makeup?: NameCount[];
+  top_makeup_by_type?: {
+    all: NameCount[];
+    lipstick: NameCount[];
+    blush: NameCount[];
+    eyeshadow: NameCount[];
+    combo: NameCount[];
+    bridal: NameCount[];
+  };
   top_hairstyles_by_gender?: GenderStyleBreakdown;
   top_haircolors_by_gender?: GenderStyleBreakdown;
   sessions_per_customer_avg: number;
@@ -60,6 +70,7 @@ export interface VtoAnalytics {
     hairstyle: number;
     haircolor: number;
     beard: number;
+    makeup?: number;
     clothing: number;
     total: number;
   }[];

@@ -5,16 +5,17 @@ export interface VtoTrendPoint {
   hairstyle: number;
   haircolor: number;
   beard: number;
+  makeup: number;
   total: number;
   isProjected?: boolean;
   actual?: Record<string, number>;
   [key: string]: string | number | boolean | Record<string, number> | undefined;
 }
 
-const VTO_METRIC_KEYS = ["hairstyle", "haircolor", "beard", "total"] as const;
+const VTO_METRIC_KEYS = ["hairstyle", "haircolor", "beard", "makeup", "total"] as const;
 
 function emptyVtoPoint(label: string): VtoTrendPoint {
-  return { label, hairstyle: 0, haircolor: 0, beard: 0, total: 0 };
+  return { label, hairstyle: 0, haircolor: 0, beard: 0, makeup: 0, total: 0 };
 }
 
 export function toVtoTrendPoints(
@@ -23,15 +24,17 @@ export function toVtoTrendPoints(
     hairstyle: number;
     haircolor: number;
     beard: number;
+    makeup?: number;
     total: number;
   }[]
 ): VtoTrendPoint[] {
-  return data.map(({ label, hairstyle, haircolor, beard }) => ({
+  return data.map(({ label, hairstyle, haircolor, beard, makeup }) => ({
     label,
     hairstyle,
     haircolor,
     beard,
-    total: hairstyle + haircolor + beard,
+    makeup: makeup ?? 0,
+    total: hairstyle + haircolor + beard + (makeup ?? 0),
   }));
 }
 
@@ -76,6 +79,7 @@ export function fillVtoLifetimeRange(
           hairstyle: existing.hairstyle,
           haircolor: existing.haircolor,
           beard: existing.beard,
+          makeup: existing.makeup ?? 0,
           total: existing.total,
         }
       : emptyVtoPoint(label);
