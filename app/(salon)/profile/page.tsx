@@ -27,6 +27,7 @@ import {
 
 import Image from "next/image";
 import { upload_logo_image } from "@/lib/api/products/upload_image";
+import { ScreensaverVideoSection } from "@/components/salon/ScreensaverVideoSection";
 
 // Types for profile data
 interface ProfileData {
@@ -354,6 +355,16 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
+
+      <ScreensaverVideoSection
+        value={salonData?.screensaver_video || ""}
+        onChange={(url) =>
+          setSalonData((prev) =>
+            prev ? { ...prev, screensaver_video: url } : prev
+          )
+        }
+        disabled={loadingSalonData}
+      />
 
       <div className="space-y-6">
         {/* Profile Information Section */}

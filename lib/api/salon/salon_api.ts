@@ -8,13 +8,15 @@ export interface SalonData {
     address: string;
     code: string;
     is_active: boolean;
-    logo_image:string
+    logo_image: string;
+    screensaver_video?: string;
 }
 
 // Update salon data interface
 export interface UpdateSalonData {
-    name: string;
-    address: string;
+    name?: string;
+    address?: string;
+    screensaver_video?: string;
 }
 
 // Get current salon data
@@ -110,5 +112,40 @@ export const updateSalonLogo = async (imageUrl: string): Promise<ApiResponse<Sal
         status: 400,
         message: "Failed to update salon data",
         data: null
+    };
+};
+
+/** Persist the salon's mirror kiosk screensaver video URL (empty string clears it). */
+export const updateSalonScreensaverVideo = async (
+    videoUrl: string
+): Promise<ApiResponse<SalonData | null>> => {
+    try {
+        const response = await api.post("/salon/current", {
+            screensaver_video: videoUrl,
+        });
+
+        if (response.status === 200) {
+            return {
+                success: true,
+                status: response.status,
+                message: response.data.message,
+                data: response.data.data,
+            };
+        }
+    } catch (error) {
+        console.log(error);
+        return {
+            success: false,
+            status: 400,
+            message: "Failed to update screensaver video",
+            data: null,
+        };
+    }
+
+    return {
+        success: false,
+        status: 400,
+        message: "Failed to update screensaver video",
+        data: null,
     };
 };
