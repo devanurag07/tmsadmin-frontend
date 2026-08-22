@@ -1,23 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import { format } from "date-fns";
 import { TrendChart } from "@/components/charts/TrendChart";
 import { BarChartCard } from "@/components/charts/BarChartCard";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   fillVtoLifetimeRange,
   toVtoTrendPoints,
 } from "@/lib/charts/vtoTrend";
 import type { VtoAnalytics } from "@/lib/api/salon/dashboard_api";
-
-const MAKEUP_TABS = [
-  { value: "all", label: "All" },
-  { value: "combo", label: "Combo" },
-  { value: "bridal", label: "Bridal" },
-] as const;
-
-type MakeupTab = (typeof MAKEUP_TABS)[number]["value"];
 
 interface VtoSectionProps {
   vto: VtoAnalytics;
@@ -27,9 +17,9 @@ interface VtoSectionProps {
   lifetimeVto?: VtoAnalytics | null;
 }
 
-function chartRows(items: { name: string; count: number }[]) {
+function chartRows(items: { name: string; count: number }[] | undefined) {
   const merged = new Map<string, { name: string; count: number }>();
-  for (const item of items) {
+  for (const item of items ?? []) {
     const key = item.name.trim().toLowerCase();
     if (!key) continue;
     const existing = merged.get(key);
@@ -83,10 +73,7 @@ function GenderTopSection({
 }
 
 function TopBeardAndMakeup({ vto }: { vto: VtoAnalytics }) {
-  const [makeupTab, setMakeupTab] = useState<MakeupTab>("all");
-  const makeupChartData = chartRows(
-    vto.top_makeup_by_type?.[makeupTab] ?? vto.top_makeup ?? []
-  );
+  const byType = vto.top_makeup_by_type;
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
@@ -97,28 +84,22 @@ function TopBeardAndMakeup({ vto }: { vto: VtoAnalytics }) {
         emptyMessage="No beard trials yet"
       />
       <BarChartCard
-        title="Top Makeup Try-On"
-        data={makeupChartData}
+        title="Top Lipstick"
+        data={chartRows(byType?.lipstick)}
         color="#f43f5e"
-        emptyMessage="No makeup try-ons yet"
-        actions={
-          <Tabs
-            value={makeupTab}
-            onValueChange={(v) => setMakeupTab(v as MakeupTab)}
-          >
-            <TabsList className="h-8">
-              {MAKEUP_TABS.map((tab) => (
-                <TabsTrigger
-                  key={tab.value}
-                  value={tab.value}
-                  className="text-xs px-2.5"
-                >
-                  {tab.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-        }
+        emptyMessage="No lipstick trials yet"
+      />
+      <BarChartCard
+        title="Top Blush"
+        data={chartRows(byType?.blush)}
+        color="#fb7185"
+        emptyMessage="No blush trials yet"
+      />
+      <BarChartCard
+        title="Top Eyeshadow"
+        data={chartRows(byType?.eyeshadow)}
+        color="#e11d48"
+        emptyMessage="No eyeshadow trials yet"
       />
     </div>
   );
