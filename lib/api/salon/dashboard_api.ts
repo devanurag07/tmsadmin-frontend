@@ -39,6 +39,7 @@ export interface VtoAnalytics {
   total_haircolor_trials: number;
   total_beard_trials: number;
   total_makeup_trials?: number;
+  total_bridal_trials?: number;
   total_clothing_trials: number;
   total_trials: number;
   distinct_customers: number;
@@ -71,6 +72,7 @@ export interface VtoAnalytics {
     haircolor: number;
     beard: number;
     makeup?: number;
+    bridal?: number;
     clothing: number;
     total: number;
   }[];

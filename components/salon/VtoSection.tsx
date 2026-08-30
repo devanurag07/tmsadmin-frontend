@@ -101,20 +101,56 @@ function TopBeardAndMakeup({ vto }: { vto: VtoAnalytics }) {
         color="#e11d48"
         emptyMessage="No eyeshadow trials yet"
       />
+      <BarChartCard
+        title="Top Bridal Looks"
+        data={chartRows(byType?.bridal)}
+        color="#c026d3"
+        emptyMessage="No bridal makeup trials yet"
+      />
     </div>
   );
 }
 
+function sumCounts(items: { name: string; count: number }[] | undefined): number {
+  return (items ?? []).reduce((sum, row) => sum + (row.count || 0), 0);
+}
+
+/** Prefer API bridal total; fall back to ranked bridal looks when the API
+ * still rolls bridal into makeup (older backends). */
+function bridalAndMakeupTotals(vto: VtoAnalytics): {
+  bridal: number;
+  makeup: number;
+} {
+  const bridalLooks = sumCounts(vto.top_makeup_by_type?.bridal);
+  const apiBridal = vto.total_bridal_trials ?? 0;
+  const apiMakeup = vto.total_makeup_trials ?? 0;
+
+  if (apiBridal > 0) {
+    return { bridal: apiBridal, makeup: apiMakeup };
+  }
+  if (bridalLooks > 0) {
+    return {
+      bridal: bridalLooks,
+      makeup: Math.max(0, apiMakeup - bridalLooks),
+    };
+  }
+  return { bridal: 0, makeup: apiMakeup };
+}
+
 export function VtoSection({ vto, createdAt, lifetimeVto }: VtoSectionProps) {
   const created = new Date(createdAt);
+  const trendSource = lifetimeVto ?? vto;
   const trend = fillVtoLifetimeRange(
-    toVtoTrendPoints((lifetimeVto ?? vto).monthly_trend),
+    toVtoTrendPoints(trendSource.monthly_trend),
     created
   );
+  const { bridal: bridalTotal, makeup: makeupTotal } = bridalAndMakeupTotals(vto);
+  const trendHasBridal = trend.some((point) => (point.bridal ?? 0) > 0);
+  const bridalTrendPending = bridalTotal > 0 && !trendHasBridal;
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 lg:grid-cols-5">
         <div className="rounded-xl border bg-card p-4 text-center">
           <p className="text-xl font-bold text-violet-600">
             {vto.total_hairstyle_trials.toLocaleString()}
@@ -135,9 +171,15 @@ export function VtoSection({ vto, createdAt, lifetimeVto }: VtoSectionProps) {
         </div>
         <div className="rounded-xl border bg-card p-4 text-center">
           <p className="text-xl font-bold text-rose-500">
-            {(vto.total_makeup_trials ?? 0).toLocaleString()}
+            {makeupTotal.toLocaleString()}
           </p>
           <p className="text-[11px] text-muted-foreground mt-1">Makeup Try-On</p>
+        </div>
+        <div className="rounded-xl border bg-card p-4 text-center">
+          <p className="text-xl font-bold text-fuchsia-600">
+            {bridalTotal.toLocaleString()}
+          </p>
+          <p className="text-[11px] text-muted-foreground mt-1">Bridal Makeup</p>
         </div>
       </div>
 
@@ -169,8 +211,16 @@ export function VtoSection({ vto, createdAt, lifetimeVto }: VtoSectionProps) {
           { key: "haircolor", color: "#ec4899", label: "Haircolor" },
           { key: "beard", color: "#f59e0b", label: "Beard" },
           { key: "makeup", color: "#f43f5e", label: "Makeup Try-On" },
+          { key: "bridal", color: "#c026d3", label: "Bridal Makeup" },
         ]}
       />
+      {bridalTrendPending && (
+        <p className="text-xs text-muted-foreground -mt-4">
+          Bridal looks are counted in the cards below, but the monthly bridal
+          line needs the updated salon dashboard API (bridal split). Until then
+          those trials are included in Makeup Try-On on the chart.
+        </p>
+      )}
 
       {vto.top_hairstyles_by_gender ? (
         <GenderTopSection

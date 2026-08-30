@@ -10,6 +10,7 @@ export interface SalonData {
     is_active: boolean;
     logo_image: string;
     screensaver_video?: string;
+    show_pricing?: boolean;
 }
 
 // Update salon data interface
@@ -17,6 +18,7 @@ export interface UpdateSalonData {
     name?: string;
     address?: string;
     screensaver_video?: string;
+    show_pricing?: boolean;
 }
 
 // Get current salon data
@@ -146,6 +148,41 @@ export const updateSalonScreensaverVideo = async (
         success: false,
         status: 400,
         message: "Failed to update screensaver video",
+        data: null,
+    };
+};
+
+/** Persist whether the mirror kiosk shows product prices. */
+export const updateSalonShowPricing = async (
+    showPricing: boolean
+): Promise<ApiResponse<SalonData | null>> => {
+    try {
+        const response = await api.post("/salon/current", {
+            show_pricing: showPricing,
+        });
+
+        if (response.status === 200) {
+            return {
+                success: true,
+                status: response.status,
+                message: response.data.message,
+                data: response.data.data,
+            };
+        }
+    } catch (error) {
+        console.log(error);
+        return {
+            success: false,
+            status: 400,
+            message: "Failed to update pricing setting",
+            data: null,
+        };
+    }
+
+    return {
+        success: false,
+        status: 400,
+        message: "Failed to update pricing setting",
         data: null,
     };
 };

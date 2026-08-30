@@ -28,6 +28,7 @@ import {
 import Image from "next/image";
 import { upload_logo_image } from "@/lib/api/products/upload_image";
 import { ScreensaverVideoSection } from "@/components/salon/ScreensaverVideoSection";
+import { PricingToggleSection } from "@/components/salon/PricingToggleSection";
 
 // Types for profile data
 interface ProfileData {
@@ -364,6 +365,16 @@ const ProfilePage = () => {
           )
         }
         disabled={loadingSalonData}
+      />
+
+      <PricingToggleSection
+        value={salonData?.show_pricing !== false}
+        onChange={(enabled) =>
+          setSalonData((prev) =>
+            prev ? { ...prev, show_pricing: enabled } : prev
+          )
+        }
+        disabled={loadingSalonData || !salonData}
       />
 
       <div className="space-y-6">
