@@ -11,6 +11,11 @@ export interface SalonData {
     logo_image: string;
     screensaver_video?: string;
     show_pricing?: boolean;
+    homepage_welcome_text?: string;
+    homepage_doodle_image?: string;
+    theme_primary_color?: string;
+    theme_bg_color?: string;
+    theme_accent_color?: string;
 }
 
 // Update salon data interface
@@ -19,6 +24,11 @@ export interface UpdateSalonData {
     address?: string;
     screensaver_video?: string;
     show_pricing?: boolean;
+    homepage_welcome_text?: string;
+    homepage_doodle_image?: string;
+    theme_primary_color?: string;
+    theme_bg_color?: string;
+    theme_accent_color?: string;
 }
 
 // Get current salon data
@@ -148,6 +158,39 @@ export const updateSalonScreensaverVideo = async (
         success: false,
         status: 400,
         message: "Failed to update screensaver video",
+        data: null,
+    };
+};
+
+/** Update homepage customization (welcome text, doodle image, theme colors). */
+export const updateHomepageCustomization = async (
+    data: Pick<UpdateSalonData, "homepage_welcome_text" | "homepage_doodle_image" | "theme_primary_color" | "theme_bg_color" | "theme_accent_color">
+): Promise<ApiResponse<SalonData | null>> => {
+    try {
+        const response = await api.post("/salon/current", data);
+
+        if (response.status === 200) {
+            return {
+                success: true,
+                status: response.status,
+                message: response.data.message,
+                data: response.data.data,
+            };
+        }
+    } catch (error) {
+        console.log(error);
+        return {
+            success: false,
+            status: 400,
+            message: "Failed to update homepage customization",
+            data: null,
+        };
+    }
+
+    return {
+        success: false,
+        status: 400,
+        message: "Failed to update homepage customization",
         data: null,
     };
 };

@@ -29,6 +29,7 @@ import Image from "next/image";
 import { upload_logo_image } from "@/lib/api/products/upload_image";
 import { ScreensaverVideoSection } from "@/components/salon/ScreensaverVideoSection";
 import { PricingToggleSection } from "@/components/salon/PricingToggleSection";
+import { HomepageCustomizationSection } from "@/components/salon/HomepageCustomizationSection";
 
 // Types for profile data
 interface ProfileData {
@@ -372,6 +373,20 @@ const ProfilePage = () => {
         onChange={(enabled) =>
           setSalonData((prev) =>
             prev ? { ...prev, show_pricing: enabled } : prev
+          )
+        }
+        disabled={loadingSalonData || !salonData}
+      />
+
+      <HomepageCustomizationSection
+        welcomeText={salonData?.homepage_welcome_text || ""}
+        doodleImage={salonData?.homepage_doodle_image || ""}
+        primaryColor={salonData?.theme_primary_color || ""}
+        bgColor={salonData?.theme_bg_color || ""}
+        accentColor={salonData?.theme_accent_color || ""}
+        onChange={(fields) =>
+          setSalonData((prev) =>
+            prev ? { ...prev, ...fields } : prev
           )
         }
         disabled={loadingSalonData || !salonData}
