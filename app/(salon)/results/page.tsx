@@ -193,7 +193,7 @@ export default function ResultsPage() {
           <p className="text-muted-foreground">No results found.</p>
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
           {filteredAndSortedResults.map((result) => (
             <Card key={result.id}>
               <CardHeader className="space-y-2">

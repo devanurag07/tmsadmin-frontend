@@ -67,28 +67,18 @@ export function ServiceAnalysisSection({
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
         <StatCard
           label={kind === "skin" ? "Total Skin Analyses" : "Total Hair Analyses"}
           value={analysis.total_analyses}
           icon={Users}
           accent={accent}
         />
-        <StatCard
-          label="Male / Female"
-          value={`${analysis.gender_counts.male} / ${analysis.gender_counts.female}`}
-        />
         {kind === "hair" && analysis.deep_analysis_count != null && (
           <StatCard
             label="Deep Analyses"
             value={analysis.deep_analysis_count}
             accent="#06b6d4"
-          />
-        )}
-        {kind === "skin" && (
-          <StatCard
-            label="Other / Unknown"
-            value={analysis.gender_counts.other}
           />
         )}
       </div>
