@@ -24,9 +24,37 @@ import {
   getMirrorApiResults,
   MirrorApiResult,
 } from "@/lib/api/mirror/mirror_api";
+import {
+  VTO_RESULT_SERVICE_LABELS,
+  VtoResultService,
+  vtoResultLabel,
+  vtoResultService,
+  vtoResultValue,
+} from "@/lib/analytics/vtoResultLabel";
 import { Activity, CheckCircle, Clock } from "lucide-react";
 
 type SortOrder = "newest" | "oldest";
+
+const ALL = "all";
+
+const TIME_PRESETS = [
+  { label: "1W", days: 7 },
+  { label: "1M", months: 1 },
+  { label: "3M", months: 3 },
+] as const;
+
+/** yyyy-mm-dd in local time, matching the date inputs. */
+function toDateInput(d: Date): string {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+function presetFromDate(preset: (typeof TIME_PRESETS)[number]): string {
+  const d = new Date();
+  if ("days" in preset) d.setDate(d.getDate() - preset.days);
+  else d.setMonth(d.getMonth() - preset.months);
+  return toDateInput(d);
+}
 
 export default function ResultsPage() {
   const [mirrorResults, setMirrorResults] = useState<MirrorApiResult[]>([]);
@@ -36,6 +64,8 @@ export default function ResultsPage() {
   const [sortOrder, setSortOrder] = useState<SortOrder>("newest");
   const [fromDate, setFromDate] = useState<string>("");
   const [toDate, setToDate] = useState<string>("");
+  const [service, setService] = useState<VtoResultService | typeof ALL>(ALL);
+  const [serviceValue, setServiceValue] = useState<string>(ALL);
 
   const formatDate = (dateString: string) => {
     const d = new Date(dateString);
@@ -73,15 +103,43 @@ export default function ResultsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const filteredAndSortedResults = useMemo(() => {
+  // Date range narrows everything below it, so service/value counts follow it.
+  const dateFilteredResults = useMemo(() => {
     const fromMs = fromDate ? new Date(`${fromDate}T00:00:00`).getTime() : null;
     const toMs = toDate ? new Date(`${toDate}T23:59:59.999`).getTime() : null;
 
-    const filtered = mirrorResults.filter((r) => {
+    return mirrorResults.filter((r) => {
       const t = new Date(r.created_at).getTime();
       if (Number.isNaN(t)) return true;
       if (fromMs !== null && t < fromMs) return false;
       if (toMs !== null && t > toMs) return false;
+      return true;
+    });
+  }, [mirrorResults, fromDate, toDate]);
+
+  // Only offer services that actually appear in the results.
+  const serviceOptions = useMemo(() => {
+    const present = new Set(dateFilteredResults.map(vtoResultService));
+    return (Object.keys(VTO_RESULT_SERVICE_LABELS) as VtoResultService[]).filter((s) =>
+      present.has(s)
+    );
+  }, [dateFilteredResults]);
+
+  const valueOptions = useMemo(() => {
+    if (service === ALL) return [];
+    const counts = new Map<string, number>();
+    for (const r of dateFilteredResults) {
+      if (vtoResultService(r) !== service) continue;
+      const v = vtoResultValue(r);
+      if (v) counts.set(v, (counts.get(v) ?? 0) + 1);
+    }
+    return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  }, [dateFilteredResults, service]);
+
+  const filteredAndSortedResults = useMemo(() => {
+    const filtered = dateFilteredResults.filter((r) => {
+      if (service !== ALL && vtoResultService(r) !== service) return false;
+      if (serviceValue !== ALL && vtoResultValue(r) !== serviceValue) return false;
       return true;
     });
 
@@ -91,7 +149,7 @@ export default function ResultsPage() {
       const bt = new Date(b.created_at).getTime();
       return (at - bt) * dir;
     });
-  }, [mirrorResults, sortOrder, fromDate, toDate]);
+  }, [dateFilteredResults, sortOrder, service, serviceValue]);
 
   if (loading) {
     return (
@@ -132,6 +190,26 @@ export default function ResultsPage() {
         </div>
 
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <div className="flex items-center gap-1">
+            {TIME_PRESETS.map((preset) => {
+              const from = presetFromDate(preset);
+              const active = fromDate === from && !toDate;
+              return (
+                <Button
+                  key={preset.label}
+                  type="button"
+                  size="sm"
+                  variant={active ? "default" : "outline"}
+                  onClick={() => {
+                    setFromDate(from);
+                    setToDate("");
+                  }}
+                >
+                  {preset.label}
+                </Button>
+              );
+            })}
+          </div>
           <div className="flex items-center gap-2">
             <Input
               type="date"
@@ -162,6 +240,46 @@ export default function ResultsPage() {
               </Button>
             )}
           </div>
+
+          <Select
+            value={service}
+            onValueChange={(v) => {
+              setService(v as VtoResultService | typeof ALL);
+              setServiceValue(ALL);
+            }}
+          >
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="Service" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={ALL}>All services</SelectItem>
+              {serviceOptions.map((s) => (
+                <SelectItem key={s} value={s}>
+                  {VTO_RESULT_SERVICE_LABELS[s]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={serviceValue}
+            onValueChange={setServiceValue}
+            disabled={service === ALL}
+          >
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Value" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={ALL}>
+                {service === ALL ? "Pick a service first" : "All values"}
+              </SelectItem>
+              {valueOptions.map(([v, count]) => (
+                <SelectItem key={v} value={v}>
+                  {v} ({count})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
           <Select
             value={sortOrder}
@@ -218,7 +336,9 @@ export default function ResultsPage() {
                     {formatDate(result.created_at)}
                   </span>
                 </div>
-                <CardTitle className="text-base">Request</CardTitle>
+                <CardTitle className="text-base leading-snug" title={vtoResultLabel(result)}>
+                  {vtoResultLabel(result)}
+                </CardTitle>
               </CardHeader>
 
               <CardContent className="space-y-3">
@@ -226,7 +346,7 @@ export default function ResultsPage() {
                   <div className="aspect-square bg-muted rounded-lg overflow-hidden">
                     <img
                       src={result.output_url}
-                      alt="Generated image"
+                      alt={vtoResultLabel(result)}
                       className="w-full h-full object-cover"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;

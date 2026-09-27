@@ -45,15 +45,25 @@ import {
 import { SalonAnalysisOverview } from "@/components/salon/SalonAnalysisOverview";
 import { DownloadReportButton } from "@/components/salon/DownloadReportButton";
 
-type ParamKey =
-  | "Acne"
-  | "Oiliness"
-  | "Redness"
-  | "Wrinkles"
-  | "Pores"
-  | "Pigmentation"
-  | "Skin Texture"
-  | "Dark Circles";
+const SKIN_PARAMS = [
+  "Acne",
+  "Oiliness",
+  "Redness",
+  "Wrinkles",
+  "Pores",
+  "Pigmentation",
+  "Skin Texture",
+  "Dark Circles",
+  // Added to the skin analysis output in Jul 2026; older results only have the 8 above.
+  "Hydration",
+  "Comedone",
+] as const;
+type ParamKey = (typeof SKIN_PARAMS)[number];
+
+/** Results store names inconsistently ("Dark Circles", "dark circles", "dark_circles"). */
+const normalizeParam = (name: string) => name.trim().toLowerCase().replace(/[\s_]+/g, " ");
+const isParam = (name: string, param: ParamKey) =>
+  normalizeParam(name) === normalizeParam(param);
 
 const getParameterStatus = (value: number) => {
   if (value >= 80)
@@ -139,7 +149,7 @@ const SkinAnalysisPage = () => {
       const inParam =
         filters.param === "all"
           ? true
-          : r.result.skin_analysis.some((m) => m.name === filters.param);
+          : r.result.skin_analysis.some((m) => isParam(m.name, filters.param as ParamKey));
       const t = new Date(r.created_at).getTime();
       const inDate =
         (fromMs === null || Number.isNaN(t) || t >= fromMs) &&
@@ -158,7 +168,7 @@ const SkinAnalysisPage = () => {
   const metricAverage = (name: ParamKey): string => {
     const vals: number[] = [];
     filtered.forEach((r) => {
-      const metric = r.result.skin_analysis.find((m) => m.name === name);
+      const metric = r.result.skin_analysis.find((m) => isParam(m.name, name));
       if (metric) vals.push(metric.score);
     });
     if (!vals.length) return "0";
@@ -297,14 +307,11 @@ const SkinAnalysisPage = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="Acne">Acne</SelectItem>
-                  <SelectItem value="Oiliness">Oiliness</SelectItem>
-                  <SelectItem value="Redness">Redness</SelectItem>
-                  <SelectItem value="Wrinkles">Wrinkles</SelectItem>
-                  <SelectItem value="Pores">Pores</SelectItem>
-                  <SelectItem value="Pigmentation">Pigmentation</SelectItem>
-                  <SelectItem value="Skin Texture">Skin Texture</SelectItem>
-                  <SelectItem value="Dark Circles">Dark Circles</SelectItem>
+                  {SKIN_PARAMS.map((p) => (
+                    <SelectItem key={p} value={p}>
+                      {p}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

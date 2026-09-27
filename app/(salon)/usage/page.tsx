@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { ServiceTabsList, ServiceTabsTrigger } from "@/components/ui/service-tabs";
 import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { LoadingState, ErrorState } from "@/components/layout/LoadingState";
@@ -16,7 +17,7 @@ import {
   dateRangeDescription,
 } from "@/lib/salon/filters";
 import { fetchSalonDashboard, SalonDashboard, VtoAnalytics } from "@/lib/api/salon/dashboard_api";
-import { Activity, Users, Zap, MapPin, Sparkles } from "lucide-react";
+import { Activity, MapPin, Scissors, Sparkles, Users, Waves, Zap } from "lucide-react";
 
 export default function UsagePage() {
   const [filters, setFilters] = useState<SalonDashboardFilters>(DEFAULT_SALON_FILTERS);
@@ -77,17 +78,28 @@ export default function UsagePage() {
       </div>
 
       <Tabs defaultValue="vto" className="space-y-6">
-        <TabsList className="bg-muted/50">
-          <TabsTrigger value="vto" className="text-xs">
-            <Sparkles className="h-3.5 w-3.5 mr-1.5" />
+        <ServiceTabsList>
+          <ServiceTabsTrigger value="vto">
+            <Scissors />
             Virtual Try-On
-          </TabsTrigger>
-          <TabsTrigger value="skin" className="text-xs">Skin Analysis</TabsTrigger>
-          <TabsTrigger value="hair" className="text-xs">Hair Analysis</TabsTrigger>
-        </TabsList>
+          </ServiceTabsTrigger>
+          <ServiceTabsTrigger value="skin">
+            <Sparkles />
+            Skin Analysis
+          </ServiceTabsTrigger>
+          <ServiceTabsTrigger value="hair">
+            <Waves />
+            Hair Analysis
+          </ServiceTabsTrigger>
+        </ServiceTabsList>
 
         <TabsContent value="vto" className="space-y-6">
-          <VtoSection vto={virtual_tryon} createdAt={salon.created_at} lifetimeVto={lifetimeVto} />
+          <VtoSection
+            vto={virtual_tryon}
+            createdAt={salon.created_at}
+            lifetimeVto={lifetimeVto}
+            salonTrend={data.monthly_trend}
+          />
         </TabsContent>
 
         <TabsContent value="skin" className="space-y-6">

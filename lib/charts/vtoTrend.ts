@@ -1,4 +1,7 @@
-import { format } from "date-fns";
+import { format, subMonths } from "date-fns";
+
+export const CHART_MONTH_OPTIONS = [1, 3, 6, 12] as const;
+export type ChartMonthOption = (typeof CHART_MONTH_OPTIONS)[number];
 
 export interface VtoTrendPoint {
   label: string;
@@ -7,6 +10,9 @@ export interface VtoTrendPoint {
   beard: number;
   makeup: number;
   bridal: number;
+  /** Skin / hair analyses, merged in via withSkinHairTrend (0 otherwise). */
+  skin: number;
+  hair: number;
   total: number;
   isProjected?: boolean;
   actual?: Record<string, number>;
@@ -19,6 +25,8 @@ const VTO_METRIC_KEYS = [
   "beard",
   "makeup",
   "bridal",
+  "skin",
+  "hair",
   "total",
 ] as const;
 
@@ -30,6 +38,8 @@ function emptyVtoPoint(label: string): VtoTrendPoint {
     beard: 0,
     makeup: 0,
     bridal: 0,
+    skin: 0,
+    hair: 0,
     total: 0,
   };
 }
@@ -52,6 +62,8 @@ export function toVtoTrendPoints(
     beard,
     makeup: makeup ?? 0,
     bridal: bridal ?? 0,
+    skin: 0,
+    hair: 0,
     total: hairstyle + haircolor + beard + (makeup ?? 0) + (bridal ?? 0),
   }));
 }
@@ -99,6 +111,8 @@ export function fillVtoLifetimeRange(
           beard: existing.beard,
           makeup: existing.makeup ?? 0,
           bridal: existing.bridal ?? 0,
+          skin: existing.skin ?? 0,
+          hair: existing.hair ?? 0,
           total: existing.total,
         }
       : emptyVtoPoint(label);
@@ -117,6 +131,49 @@ export function fillVtoLifetimeRange(
       result.push(base);
     }
     cursor.setMonth(cursor.getMonth() + 1);
+  }
+
+  return result;
+}
+
+/** Add per-month skin / hair analysis counts onto a VTO trend. `total` stays VTO-only. */
+export function withSkinHairTrend(
+  data: VtoTrendPoint[],
+  monthly: { label: string; skin: number; hair: number }[] | null | undefined
+): VtoTrendPoint[] {
+  const byLabel = new Map((monthly ?? []).map((point) => [point.label, point]));
+  return data.map((point) => {
+    const month = byLabel.get(point.label);
+    return { ...point, skin: month?.skin ?? 0, hair: month?.hair ?? 0 };
+  });
+}
+
+/** Last N calendar months of an unprojected trend; multi-month views project
+ * the current month to a 30-day pace. */
+export function prepareVtoMonthlyTrend(
+  data: VtoTrendPoint[],
+  months: ChartMonthOption
+): VtoTrendPoint[] {
+  const byLabel = new Map(data.map((point) => [point.label, point]));
+  const now = new Date();
+  const currentLabel = format(now, "MMM yyyy");
+  const dayOfMonth = now.getDate();
+  const result: VtoTrendPoint[] = [];
+
+  for (let i = months - 1; i >= 0; i--) {
+    const label = format(subMonths(now, i), "MMM yyyy");
+    const base = byLabel.get(label) ?? emptyVtoPoint(label);
+    if (months === 1 || label !== currentLabel || dayOfMonth <= 0) {
+      result.push(base);
+      continue;
+    }
+    const actual: Record<string, number> = {};
+    const projected: VtoTrendPoint = { ...base, actual, isProjected: true };
+    for (const key of VTO_METRIC_KEYS) {
+      actual[key] = base[key] as number;
+      projected[key] = projectValueAt30DayPace(base[key] as number, dayOfMonth);
+    }
+    result.push(projected);
   }
 
   return result;

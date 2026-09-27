@@ -1,13 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import { format } from "date-fns";
 import { TrendChart } from "@/components/charts/TrendChart";
+import { ServiceMetricRow, SERVICE_TREND_SERIES } from "@/components/kpi/ServiceMetricRow";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { BarChartCard } from "@/components/charts/BarChartCard";
 import {
+  CHART_MONTH_OPTIONS,
+  ChartMonthOption,
   fillVtoLifetimeRange,
+  prepareVtoMonthlyTrend,
   toVtoTrendPoints,
+  withSkinHairTrend,
 } from "@/lib/charts/vtoTrend";
-import type { VtoAnalytics } from "@/lib/api/salon/dashboard_api";
+import type { SalonDashboard, VtoAnalytics } from "@/lib/api/salon/dashboard_api";
 
 interface VtoSectionProps {
   vto: VtoAnalytics;
@@ -15,6 +22,8 @@ interface VtoSectionProps {
   /** When provided, the trend is fetched across the salon lifetime regardless
    * of the active date filter — pass the lifetime VTO object here. */
   lifetimeVto?: VtoAnalytics | null;
+  /** Salon-level monthly trend; supplies the skin / hair lines. */
+  salonTrend?: SalonDashboard["monthly_trend"];
 }
 
 function chartRows(items: { name: string; count: number }[] | undefined) {
@@ -137,7 +146,8 @@ function bridalAndMakeupTotals(vto: VtoAnalytics): {
   return { bridal: 0, makeup: apiMakeup };
 }
 
-export function VtoSection({ vto, createdAt, lifetimeVto }: VtoSectionProps) {
+export function VtoSection({ vto, createdAt, lifetimeVto, salonTrend }: VtoSectionProps) {
+  const [serviceChartMonths, setServiceChartMonths] = useState<ChartMonthOption>(6);
   const created = new Date(createdAt);
   const trendSource = lifetimeVto ?? vto;
   const trend = fillVtoLifetimeRange(
@@ -147,41 +157,46 @@ export function VtoSection({ vto, createdAt, lifetimeVto }: VtoSectionProps) {
   const { bridal: bridalTotal, makeup: makeupTotal } = bridalAndMakeupTotals(vto);
   const trendHasBridal = trend.some((point) => (point.bridal ?? 0) > 0);
   const bridalTrendPending = bridalTotal > 0 && !trendHasBridal;
+  const usageByService = vto.usage_by_service ?? {
+    hairstyle: vto.total_hairstyle_trials,
+    haircolor: vto.total_haircolor_trials,
+    beard: vto.total_beard_trials,
+    makeup: makeupTotal,
+    bridal: bridalTotal,
+  };
+
+  // Unprojected lifetime trends; prepareVtoMonthlyTrend slices and projects them.
+  const usageTrend = withSkinHairTrend(
+    fillVtoLifetimeRange(toVtoTrendPoints(trendSource.monthly_trend), created, new Date(), false),
+    salonTrend
+  );
+  const customerTrend = trendSource.monthly_customer_trend
+    ? withSkinHairTrend(
+        fillVtoLifetimeRange(
+          toVtoTrendPoints(trendSource.monthly_customer_trend),
+          created,
+          new Date(),
+          false
+        ),
+        salonTrend
+      )
+    : null;
+  const serviceRangeLabel = `last ${serviceChartMonths} month${serviceChartMonths > 1 ? "s" : ""}`;
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 grid-cols-2 lg:grid-cols-5">
-        <div className="rounded-xl border bg-card p-4 text-center">
-          <p className="text-xl font-bold text-violet-600">
-            {vto.total_hairstyle_trials.toLocaleString()}
-          </p>
-          <p className="text-[11px] text-muted-foreground mt-1">Hairstyle trials</p>
-        </div>
-        <div className="rounded-xl border bg-card p-4 text-center">
-          <p className="text-xl font-bold text-pink-500">
-            {vto.total_haircolor_trials.toLocaleString()}
-          </p>
-          <p className="text-[11px] text-muted-foreground mt-1">Haircolor trials</p>
-        </div>
-        <div className="rounded-xl border bg-card p-4 text-center">
-          <p className="text-xl font-bold text-amber-500">
-            {vto.total_beard_trials.toLocaleString()}
-          </p>
-          <p className="text-[11px] text-muted-foreground mt-1">Beard trials</p>
-        </div>
-        <div className="rounded-xl border bg-card p-4 text-center">
-          <p className="text-xl font-bold text-rose-500">
-            {makeupTotal.toLocaleString()}
-          </p>
-          <p className="text-[11px] text-muted-foreground mt-1">Makeup Try-On</p>
-        </div>
-        <div className="rounded-xl border bg-card p-4 text-center">
-          <p className="text-xl font-bold text-fuchsia-600">
-            {bridalTotal.toLocaleString()}
-          </p>
-          <p className="text-[11px] text-muted-foreground mt-1">Bridal Makeup</p>
-        </div>
-      </div>
+      <ServiceMetricRow
+        title="Services by Customer"
+        subtitle="Each customer counts once per service tried in a session"
+        values={vto.customers_by_service}
+      />
+      <ServiceMetricRow
+        title="Services by Usage"
+        subtitle="Every try-on counted · avg uses per customer below"
+        values={usageByService}
+        subValues={vto.avg_usage_by_service}
+        formatSub={(v) => `avg ${v.toFixed(1)} / customer`}
+      />
 
       <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
         <div className="rounded-xl border bg-card p-4">
@@ -221,6 +236,54 @@ export function VtoSection({ vto, createdAt, lifetimeVto }: VtoSectionProps) {
           those trials are included in Makeup Try-On on the chart.
         </p>
       )}
+
+      <div className="space-y-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-sm font-semibold">Service Trends</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {serviceChartMonths === 1
+                ? "Actual counts for the current month"
+                : "Multi-month view projects current month at 30-day pace (usage ÷ day × 30)"}
+            </p>
+          </div>
+          <ToggleGroup
+            type="single"
+            variant="outline"
+            size="sm"
+            value={String(serviceChartMonths)}
+            onValueChange={(v) => {
+              if (v) setServiceChartMonths(Number(v) as ChartMonthOption);
+            }}
+          >
+            {CHART_MONTH_OPTIONS.map((m) => (
+              <ToggleGroupItem key={m} value={String(m)} className="text-xs px-3">
+                {m}M
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
+        </div>
+        <div className="grid gap-6 lg:grid-cols-2">
+          {customerTrend && (
+            <TrendChart
+              key={`service-customers-${serviceChartMonths}`}
+              chartKey={serviceChartMonths}
+              title="Services by Customer"
+              description={`Unique customers per service · ${serviceRangeLabel}`}
+              data={prepareVtoMonthlyTrend(customerTrend, serviceChartMonths)}
+              series={SERVICE_TREND_SERIES}
+            />
+          )}
+          <TrendChart
+            key={`service-usage-${serviceChartMonths}`}
+            chartKey={serviceChartMonths}
+            title="Services by Usage"
+            description={`Every try-on and analysis per service · ${serviceRangeLabel}`}
+            data={prepareVtoMonthlyTrend(usageTrend, serviceChartMonths)}
+            series={SERVICE_TREND_SERIES}
+          />
+        </div>
+      </div>
 
       {vto.top_hairstyles_by_gender ? (
         <GenderTopSection

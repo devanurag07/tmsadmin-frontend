@@ -29,6 +29,18 @@ export interface NameCount {
   count: number;
 }
 
+export type VtoService = "hairstyle" | "haircolor" | "beard" | "makeup" | "bridal";
+
+export interface VtoMonthlyPoint {
+  label: string;
+  hairstyle: number;
+  haircolor: number;
+  beard: number;
+  makeup?: number;
+  bridal?: number;
+  total: number;
+}
+
 export interface GenderStyleBreakdown {
   male: NameCount[];
   female: NameCount[];
@@ -42,6 +54,11 @@ export interface VtoAnalytics {
   total_bridal_trials?: number;
   total_clothing_trials: number;
   total_trials: number;
+  usage_by_service?: Record<VtoService, number>;
+  customers_by_service?: Record<VtoService, number>;
+  avg_usage_by_service?: Record<VtoService, number>;
+  /** Per-month unique customers per service (salon lifetime). */
+  monthly_customer_trend?: VtoMonthlyPoint[];
   distinct_customers: number;
   avg_hairstyles_per_customer: number;
   avg_haircolors_per_customer: number;
@@ -97,6 +114,8 @@ export interface SalonDashboard {
   virtual_tryon: VtoAnalytics;
   skin_analysis: ServiceAnalytics;
   hair_analysis: ServiceAnalytics;
+  /** Last 12 months of results per service (VTO / skin / hair). */
+  monthly_trend?: { label: string; vto: number; skin: number; hair: number; total: number }[];
 }
 
 export const fetchSalonDashboard = async (
