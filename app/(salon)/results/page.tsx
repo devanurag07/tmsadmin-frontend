@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,14 +11,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   getMirrorApiResults,
   MirrorApiResult,
@@ -185,7 +176,7 @@ export default function ResultsPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Results</h1>
           <p className="text-muted-foreground">
-            Mirror API requests and generated outputs (sorted by date)
+            Latest virtual try-on generated outputs
           </p>
         </div>
 
@@ -311,84 +302,49 @@ export default function ResultsPage() {
           <p className="text-muted-foreground">No results found.</p>
         </div>
       ) : (
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-          {filteredAndSortedResults.map((result) => (
-            <Card key={result.id}>
-              <CardHeader className="space-y-2">
-                <div className="flex items-center justify-between gap-3">
-                  <Badge
-                    variant={result.is_ready ? "default" : "secondary"}
-                    className="flex items-center gap-1"
-                  >
-                    {result.is_ready ? (
-                      <>
-                        <CheckCircle className="h-3 w-3" />
-                        Ready
-                      </>
-                    ) : (
-                      <>
-                        <Clock className="h-3 w-3" />
-                        Pending
-                      </>
-                    )}
-                  </Badge>
-                  <span className="text-xs text-muted-foreground">
-                    {formatDate(result.created_at)}
-                  </span>
-                </div>
-                <CardTitle className="text-base leading-snug" title={vtoResultLabel(result)}>
-                  {vtoResultLabel(result)}
-                </CardTitle>
-              </CardHeader>
-
-              <CardContent className="space-y-3">
+        <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+          {filteredAndSortedResults.map((result) => {
+            const label = vtoResultLabel(result);
+            return (
+              <div
+                key={result.id}
+                className="rounded-xl border bg-card overflow-hidden hover:shadow-sm transition-shadow"
+              >
                 {result.is_ready && result.output_url ? (
-                  <div className="aspect-square bg-muted rounded-lg overflow-hidden">
+                  <div className="aspect-square bg-muted">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={result.output_url}
-                      alt={vtoResultLabel(result)}
+                      alt={label}
                       className="w-full h-full object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = "none";
-                      }}
                     />
                   </div>
-                ) : null}
-
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">Request ID</p>
-                  <p className="text-xs text-muted-foreground font-mono break-all">
-                    {result.request_id}
+                ) : (
+                  <div className="aspect-square bg-muted flex items-center justify-center">
+                    <Clock className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                )}
+                <div className="p-2.5 space-y-1.5">
+                  <p className="text-xs font-medium leading-snug line-clamp-2" title={label}>
+                    {label}
+                  </p>
+                  <Badge
+                    variant={result.is_ready ? "default" : "secondary"}
+                    className="text-[10px] px-1.5 py-0 h-5 gap-1"
+                  >
+                    {result.is_ready ? (
+                      <><CheckCircle className="h-2.5 w-2.5" />Ready</>
+                    ) : (
+                      <><Clock className="h-2.5 w-2.5" />Pending</>
+                    )}
+                  </Badge>
+                  <p className="text-[11px] text-muted-foreground">
+                    {formatDate(result.created_at)}
                   </p>
                 </div>
-
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">Prompt</p>
-                  <p className="text-xs text-muted-foreground line-clamp-4">
-                    {result.prompt}
-                  </p>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button type="button" variant="outline" size="sm">
-                        Show prompt
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-2xl">
-                      <DialogHeader>
-                        <DialogTitle>Full prompt</DialogTitle>
-                      </DialogHeader>
-                      <ScrollArea className="max-h-[60vh] pr-4">
-                        <pre className="whitespace-pre-wrap wrap-break-word text-sm">
-                          {result.prompt}
-                        </pre>
-                      </ScrollArea>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
