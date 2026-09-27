@@ -11,7 +11,6 @@ import { Input } from "@/components/ui/input";
 import {
   SalonDashboardFilters,
   DateRangePreset,
-  GenderFilter,
   ServiceFilter,
 } from "@/lib/salon/filters";
 
@@ -86,25 +85,6 @@ export function DashboardFilters({
             </Select>
           </div>
         )}
-
-        <div className="space-y-1.5">
-          <label className="text-[11px] font-medium text-muted-foreground">
-            Gender
-          </label>
-          <Select
-            value={filters.gender}
-            onValueChange={(v) => update("gender", v as GenderFilter)}
-          >
-            <SelectTrigger className="w-[130px] h-9">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All genders</SelectItem>
-              <SelectItem value="M">Male</SelectItem>
-              <SelectItem value="F">Female</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
 
         {filters.dateRange === "custom" && (
           <>

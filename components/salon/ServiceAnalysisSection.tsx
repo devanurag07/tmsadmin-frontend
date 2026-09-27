@@ -1,13 +1,21 @@
 "use client";
 
+import { useState } from "react";
 import { StatCard } from "@/components/kpi/StatCard";
+import { TrendChart } from "@/components/charts/TrendChart";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
   ParameterAverageCard,
   ScoreTallyCard,
   ScoreTallyLegend,
 } from "@/components/kpi/ScoreTallyCard";
 import { toScoreTallyBuckets } from "@/lib/analytics/scoreTally";
-import type { ServiceAnalytics } from "@/lib/api/salon/dashboard_api";
+import {
+  CHART_MONTH_OPTIONS,
+  ChartMonthOption,
+  prepareServiceMonthlyTrend,
+} from "@/lib/charts/vtoTrend";
+import type { SalonDashboard, ServiceAnalytics } from "@/lib/api/salon/dashboard_api";
 import { Users } from "lucide-react";
 
 interface ServiceAnalysisSectionProps {
@@ -15,6 +23,8 @@ interface ServiceAnalysisSectionProps {
   accent: string;
   /** "skin" uses skin_metrics, "hair" uses hair_metrics. */
   kind: "skin" | "hair";
+  /** Salon monthly trend (last 12 months, per service); drives the usage chart. */
+  monthlyTrend?: SalonDashboard["monthly_trend"];
 }
 
 function MetricGrid({
@@ -56,7 +66,12 @@ export function ServiceAnalysisSection({
   analysis,
   accent,
   kind,
+  monthlyTrend,
 }: ServiceAnalysisSectionProps) {
+  const [chartMonths, setChartMonths] = useState<ChartMonthOption>(6);
+  const chartData = monthlyTrend
+    ? prepareServiceMonthlyTrend(monthlyTrend, kind, chartMonths)
+    : [];
   const metrics = kind === "skin" ? analysis.skin_metrics : analysis.hair_metrics;
   const gradient =
     kind === "skin" ? "from-cyan-500 to-blue-500" : "from-amber-400 to-orange-500";
@@ -74,14 +89,46 @@ export function ServiceAnalysisSection({
           icon={Users}
           accent={accent}
         />
-        {kind === "hair" && analysis.deep_analysis_count != null && (
-          <StatCard
-            label="Deep Analyses"
-            value={analysis.deep_analysis_count}
-            accent="#06b6d4"
-          />
-        )}
       </div>
+
+      {chartData.length > 0 && (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-semibold">Monthly Usage</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {kind === "skin" ? "Skin" : "Hair"} analyses per month
+              </p>
+            </div>
+            <ToggleGroup
+              type="single"
+              variant="outline"
+              size="sm"
+              value={String(chartMonths)}
+              onValueChange={(v) => v && setChartMonths(Number(v) as ChartMonthOption)}
+            >
+              {CHART_MONTH_OPTIONS.map((m) => (
+                <ToggleGroupItem key={m} value={String(m)} className="text-xs px-2.5">
+                  {m}M
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          </div>
+          <TrendChart
+            title={kind === "skin" ? "Skin Analysis Trend" : "Hair Analysis Trend"}
+            description={`Last ${chartMonths} month${chartMonths > 1 ? "s" : ""}`}
+            data={chartData}
+            series={[
+              {
+                key: kind,
+                color: accent,
+                label: kind === "skin" ? "Skin Analyses" : "Hair Analyses",
+              },
+            ]}
+            chartKey={`${kind}-${chartMonths}`}
+          />
+        </div>
+      )}
 
       {metrics && Object.keys(metrics).length > 0 && (
         <div>

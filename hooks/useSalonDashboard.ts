@@ -44,7 +44,7 @@ export function useSalonDashboard(filters: SalonDashboardFilters): State {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters.dateRange, filters.gender, filters.service, filters.startDate, filters.endDate, nonce]);
+  }, [filters.dateRange, filters.service, filters.startDate, filters.endDate, nonce]);
 
   return { data, loading, error, reload };
 }

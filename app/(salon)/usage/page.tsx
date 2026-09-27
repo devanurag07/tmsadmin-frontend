@@ -9,6 +9,7 @@ import { LoadingState, ErrorState } from "@/components/layout/LoadingState";
 import { StatCard } from "@/components/kpi/StatCard";
 import { DashboardFilters } from "@/components/salon/DashboardFilters";
 import { VtoSection } from "@/components/salon/VtoSection";
+import { ServiceTrendsSection } from "@/components/salon/ServiceTrendsSection";
 import { ServiceAnalysisSection } from "@/components/salon/ServiceAnalysisSection";
 import { useSalonDashboard } from "@/hooks/useSalonDashboard";
 import {
@@ -70,12 +71,16 @@ export default function UsagePage() {
         Showing data for: <span className="font-medium text-foreground">{dateRangeDescription(filters)}</span>
       </p>
 
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
         <StatCard label="Total Customers" value={summary.total_customers} icon={Users} accent="#6366f1" />
         <StatCard label="Total Sessions" value={summary.total_sessions} icon={Zap} accent="#8b5cf6" />
-        <StatCard label="Male Customers" value={summary.male_customers} accent="#3b82f6" />
-        <StatCard label="Female Customers" value={summary.female_customers} accent="#ec4899" />
       </div>
+
+      <ServiceTrendsSection
+        vto={lifetimeVto ?? virtual_tryon}
+        createdAt={salon.created_at}
+        salonTrend={data.monthly_trend}
+      />
 
       <Tabs defaultValue="vto" className="space-y-6">
         <ServiceTabsList>
@@ -94,20 +99,25 @@ export default function UsagePage() {
         </ServiceTabsList>
 
         <TabsContent value="vto" className="space-y-6">
-          <VtoSection
-            vto={virtual_tryon}
-            createdAt={salon.created_at}
-            lifetimeVto={lifetimeVto}
-            salonTrend={data.monthly_trend}
-          />
+          <VtoSection vto={virtual_tryon} createdAt={salon.created_at} lifetimeVto={lifetimeVto} />
         </TabsContent>
 
         <TabsContent value="skin" className="space-y-6">
-          <ServiceAnalysisSection analysis={skin_analysis} accent="#06b6d4" kind="skin" />
+          <ServiceAnalysisSection
+            analysis={skin_analysis}
+            accent="#06b6d4"
+            kind="skin"
+            monthlyTrend={data.monthly_trend}
+          />
         </TabsContent>
 
         <TabsContent value="hair" className="space-y-6">
-          <ServiceAnalysisSection analysis={hair_analysis} accent="#f59e0b" kind="hair" />
+          <ServiceAnalysisSection
+            analysis={hair_analysis}
+            accent="#f59e0b"
+            kind="hair"
+            monthlyTrend={data.monthly_trend}
+          />
         </TabsContent>
       </Tabs>
     </div>

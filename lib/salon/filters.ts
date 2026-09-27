@@ -9,10 +9,8 @@ export type DateRangePreset =
   | "custom";
 
 export type ServiceFilter = "all" | "vto" | "skin" | "hair";
-export type GenderFilter = "all" | "M" | "F";
 
 export interface SalonDashboardFilters {
-  gender: GenderFilter;
   service: ServiceFilter;
   dateRange: DateRangePreset;
   startDate?: string;
@@ -20,14 +18,12 @@ export interface SalonDashboardFilters {
 }
 
 export const DEFAULT_SALON_FILTERS: SalonDashboardFilters = {
-  gender: "all",
   service: "all",
   dateRange: "month",
 };
 
 export function salonFiltersToQuery(filters: SalonDashboardFilters): string {
   const params = new URLSearchParams();
-  if (filters.gender !== "all") params.set("gender", filters.gender);
   if (filters.service !== "all") params.set("service", filters.service);
   params.set("date_range", filters.dateRange);
   if (filters.dateRange === "custom" && filters.startDate) {

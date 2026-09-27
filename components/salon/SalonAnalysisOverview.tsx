@@ -56,6 +56,7 @@ export function SalonAnalysisOverview({ kind }: SalonAnalysisOverviewProps) {
           analysis={kind === "skin" ? data.skin_analysis : data.hair_analysis}
           accent={kind === "skin" ? "#06b6d4" : "#f59e0b"}
           kind={kind}
+          monthlyTrend={data.monthly_trend}
         />
       )}
     </div>

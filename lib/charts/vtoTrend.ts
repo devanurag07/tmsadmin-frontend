@@ -178,3 +178,41 @@ export function prepareVtoMonthlyTrend(
 
   return result;
 }
+
+export interface ServiceTrendPoint {
+  label: string;
+  isProjected?: boolean;
+  actual?: Record<string, number>;
+  [key: string]: string | number | boolean | Record<string, number> | undefined;
+}
+
+/** Last N calendar months of one service count (e.g. "skin" / "hair") from the
+ * salon monthly trend; multi-month views project the current month to a 30-day pace. */
+export function prepareServiceMonthlyTrend(
+  data: ({ label: string } & Record<string, string | number>)[] | null | undefined,
+  key: string,
+  months: ChartMonthOption
+): ServiceTrendPoint[] {
+  const byLabel = new Map((data ?? []).map((point) => [point.label, Number(point[key]) || 0]));
+  const now = new Date();
+  const currentLabel = format(now, "MMM yyyy");
+  const dayOfMonth = now.getDate();
+  const result: ServiceTrendPoint[] = [];
+
+  for (let i = months - 1; i >= 0; i--) {
+    const label = format(subMonths(now, i), "MMM yyyy");
+    const value = byLabel.get(label) ?? 0;
+    if (months > 1 && label === currentLabel && dayOfMonth > 0) {
+      result.push({
+        label,
+        [key]: projectValueAt30DayPace(value, dayOfMonth),
+        actual: { [key]: value },
+        isProjected: true,
+      });
+    } else {
+      result.push({ label, [key]: value });
+    }
+  }
+
+  return result;
+}
