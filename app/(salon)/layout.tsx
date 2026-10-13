@@ -1,19 +1,22 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { X, Activity, Camera, FileImage, Users, User, Scissors, ShoppingCart, Menu } from "lucide-react";
-import { ThemeSwitcher } from "@/components/theme-provider";
+import { usePathname, useRouter } from "next/navigation";
+import { X, Activity, Camera, FileImage, Users, User, Scissors, ShoppingCart, Menu, Sparkles } from "lucide-react";
 import logoWhite from "@/assets/logo/logo_white.webp";
 import Image from "next/image";
-const navigation = [
-  { name: "Dashboard", href: "/usage", icon: Activity },
-  { name: "Results", href: "/results", icon: FileImage },
-  { name: "Hairstyle Data", href: "/data", icon: Camera },
-  { name: "Products", href: "/products", icon: ShoppingCart },
-  { name: "Skin Analysis", href: "/skin-analysis", icon: Users },
-  { name: "Hair Analysis", href: "/hair-analysis", icon: Scissors },
-  { name: "Profile", href: "/profile", icon: User },
+import { useTranslation } from "@/lib/i18n/language-provider";
+import type { TranslationKey } from "@/lib/i18n/translations";
+
+const navigation: { key: TranslationKey; href: string; icon: typeof Activity }[] = [
+  { key: "nav.dashboard", href: "/usage", icon: Activity },
+  { key: "nav.results", href: "/results", icon: FileImage },
+  { key: "nav.vtoData", href: "/data", icon: Camera },
+  { key: "nav.products", href: "/products", icon: ShoppingCart },
+  { key: "nav.services", href: "/services", icon: Sparkles },
+  { key: "nav.skinAnalysis", href: "/skin-analysis", icon: Users },
+  { key: "nav.hairAnalysis", href: "/hair-analysis", icon: Scissors },
+  { key: "nav.profile", href: "/profile", icon: User },
 ];
 
 export default function SalonLayout({
@@ -22,7 +25,22 @@ export default function SalonLayout({
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  const { t } = useTranslation();
+
+  // Without a token the panel can only show an empty shell, so send the
+  // user straight to the login screen.
+  useEffect(() => {
+    if (!localStorage.getItem("access-tmsadmin")) {
+      router.replace("/login");
+      return;
+    }
+    setAuthChecked(true);
+  }, [router]);
+
+  if (!authChecked) return null;
 
   return (
     <div className="flex h-dvh max-h-dvh bg-linear-to-br from-neutral-50 to-neutral-100 overflow-hidden">
@@ -52,7 +70,6 @@ export default function SalonLayout({
               <Image src={logoWhite} alt="TryMyStyle Logo" />
             </div>
             <div className="flex items-center space-x-2">
-              <ThemeSwitcher />
               <button
                 onClick={() => setSidebarOpen(false)}
                 className="lg:hidden p-2 rounded-md text-sidebar-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent"
@@ -68,7 +85,7 @@ export default function SalonLayout({
               const isActive = pathname === item.href;
               return (
                 <Link
-                  key={item.name}
+                  key={item.href}
                   href={item.href}
                   className={`
                                         flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200
@@ -80,7 +97,7 @@ export default function SalonLayout({
                   onClick={() => setSidebarOpen(false)}
                 >
                   <item.icon className="h-5 w-5" />
-                  <span>{item.name}</span>
+                  <span>{t(item.key)}</span>
                 </Link>
               );
             })}
@@ -96,7 +113,7 @@ export default function SalonLayout({
               }}
               className="w-full mb-2 px-4 py-2 rounded-lg text-sm font-medium bg-sidebar-accent text-sidebar-foreground hover:bg-sidebar-accent/80 transition-colors"
             >
-              Logout
+              {t("shell.logout")}
             </button>
             <div className="text-xs text-sidebar-foreground/80 text-center">
               © 2024 TryMyStyle
@@ -111,14 +128,14 @@ export default function SalonLayout({
         <header className="flex shrink-0 items-center gap-3 border-b bg-background px-3 py-3 lg:hidden">
           <button
             type="button"
-            aria-label="Open navigation menu"
+            aria-label={t("shell.openMenu")}
             onClick={() => setSidebarOpen(true)}
             className="inline-flex shrink-0 items-center justify-center rounded-md border border-border p-2 text-foreground hover:bg-muted touch-manipulation"
           >
             <Menu className="h-5 w-5" />
           </button>
           <span className="truncate text-sm font-semibold tracking-tight">
-            TryMyStyle Admin
+            {t("shell.adminTitle")}
           </span>
         </header>
 

@@ -20,10 +20,14 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use((response) => {
     return response
 }, (error) => {
-    if (error.response.status === 401) {
+    if (error.response?.status === 401) {
         localStorage.removeItem("access-tmsadmin")
         localStorage.removeItem("refresh-tmsadmin")
-        // window.location.href = "/login"
+        // Session expired: send the user back to the login screen instead of
+        // leaving them on an empty dashboard.
+        if (window.location.pathname !== "/login") {
+            window.location.href = "/login"
+        }
     }
     return Promise.reject(error)
 })

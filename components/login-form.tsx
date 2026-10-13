@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { login } from "@/lib/api/login/login_api";
+import { useTranslation } from "@/lib/i18n/language-provider";
 
 export function LoginForm({
   className,
@@ -14,11 +15,14 @@ export function LoginForm({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setSubmitting(true);
     const response = await login(email, password);
-    console.log(response);
+    setSubmitting(false);
     if (response.success) {
       if (response.data) {
         localStorage.setItem("access-tmsadmin", response.data.access);
@@ -37,43 +41,38 @@ export function LoginForm({
       onSubmit={handleSubmit}
     >
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Login To Your Salon</h1>
+        <h1 className="text-2xl font-bold">{t("login.title")}</h1>
         <p className="text-muted-foreground text-sm text-balance">
-          Enter your email below to login to your account
+          {t("login.subtitle")}
         </p>
       </div>
       <div className="grid gap-6">
         {error && <p className="text-red-500">{error}</p>}
         <div className="grid gap-3">
-          <Label htmlFor="email">Email / Username</Label>
+          <Label htmlFor="email">{t("login.id")}</Label>
           <Input
             id="email"
-            placeholder="m@example.com"
+            placeholder="AURE01"
+            autoComplete="username"
+            autoFocus
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
         <div className="grid gap-3">
-          <div className="flex items-center">
-            <Label htmlFor="password">Password</Label>
-            <a
-              href="#"
-              className="ml-auto text-sm underline-offset-4 hover:underline"
-            >
-              Forgot your password?
-            </a>
-          </div>
+          <Label htmlFor="password">{t("login.password")}</Label>
           <Input
             id="password"
             type="password"
+            autoComplete="current-password"
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        <Button type="submit" className="w-full">
-          Login
+        <Button type="submit" className="w-full" disabled={submitting}>
+          {submitting ? t("login.submitting") : t("login.submit")}
         </Button>
       </div>
     </form>

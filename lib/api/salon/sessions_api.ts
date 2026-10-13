@@ -22,6 +22,12 @@ export interface ApiResult {
     created_at: string;
     salon: number;
     session: number;
+    hairstyle_name?: string;
+    is_haircolor?: boolean;
+    is_beard?: boolean;
+    is_clothing?: boolean;
+    is_makeup?: boolean;
+    makeup_type?: string;
 }
 
 export interface SalonSession {

@@ -11,14 +11,11 @@ import { Input } from "@/components/ui/input";
 import {
   SalonDashboardFilters,
   DateRangePreset,
-  ServiceFilter,
 } from "@/lib/salon/filters";
 
 interface DashboardFiltersProps {
   filters: SalonDashboardFilters;
   onChange: (next: SalonDashboardFilters) => void;
-  /** Hide the service selector (e.g. on service-specific pages). */
-  hideService?: boolean;
 }
 
 const DATE_RANGE_OPTIONS: { value: DateRangePreset; label: string }[] = [
@@ -33,7 +30,6 @@ const DATE_RANGE_OPTIONS: { value: DateRangePreset; label: string }[] = [
 export function DashboardFilters({
   filters,
   onChange,
-  hideService,
 }: DashboardFiltersProps) {
   const update = <K extends keyof SalonDashboardFilters>(
     key: K,
@@ -63,28 +59,6 @@ export function DashboardFilters({
             </SelectContent>
           </Select>
         </div>
-
-        {!hideService && (
-          <div className="space-y-1.5">
-            <label className="text-[11px] font-medium text-muted-foreground">
-              Service
-            </label>
-            <Select
-              value={filters.service}
-              onValueChange={(v) => update("service", v as ServiceFilter)}
-            >
-              <SelectTrigger className="w-[140px] h-9">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All services</SelectItem>
-                <SelectItem value="vto">Virtual Try-On</SelectItem>
-                <SelectItem value="skin">Skin Analysis</SelectItem>
-                <SelectItem value="hair">Hair Analysis</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        )}
 
         {filters.dateRange === "custom" && (
           <>

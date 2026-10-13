@@ -12,7 +12,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Activity, Edit, Eye, EyeOff, Key, Building } from "lucide-react";
+import { Activity, Edit, Eye, EyeOff, Key, Building, Languages } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useTranslation } from "@/lib/i18n/language-provider";
+import { LANGUAGES, Language } from "@/lib/i18n/translations";
 import {
   getCurrentSalon,
   updateCurrentSalon,
@@ -108,6 +117,7 @@ const dummyProfileData: ProfileData = {
 };
 
 const ProfilePage = () => {
+  const { t, language, setLanguage } = useTranslation();
   const [profile, setProfile] = useState<ProfileData>(dummyProfileData);
   const [salonData, setSalonData] = useState<SalonData | null>(null);
   const [loadingSalonData, setLoadingSalonData] = useState(false);
@@ -277,12 +287,34 @@ const ProfilePage = () => {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-          Profile Settings
+          {t("profile.title")}
         </h1>
-        <p className="text-muted-foreground">
-          Manage your account settings and preferences
-        </p>
+        <p className="text-muted-foreground">{t("profile.subtitle")}</p>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Languages className="h-5 w-5" />
+            <span>{t("profile.language")}</span>
+          </CardTitle>
+          <CardDescription>{t("profile.languageDesc")}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Select value={language} onValueChange={(v) => setLanguage(v as Language)}>
+            <SelectTrigger className="w-full sm:w-[240px]" aria-label={t("profile.language")}>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {LANGUAGES.map((l) => (
+                <SelectItem key={l.code} value={l.code}>
+                  {l.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </CardContent>
+      </Card>
 
       <div className="image-section rounded-2xl border bg-white p-4 shadow-md sm:p-6">
         <div className="img flex flex-col items-center gap-8 md:flex-row md:items-center md:justify-between md:gap-10">
@@ -401,16 +433,14 @@ const ProfilePage = () => {
               <div>
                 <CardTitle className="flex items-center space-x-2">
                   <Building className="h-5 w-5" />
-                  <span>Salon Information</span>
+                  <span>{t("profile.salonInfo")}</span>
                   {loadingSalonData && (
                     <Badge variant="secondary" className="ml-2">
-                      Loading...
+                      {t("common.loading")}
                     </Badge>
                   )}
                 </CardTitle>
-                <CardDescription>
-                  Update your salon details and contact information
-                </CardDescription>
+                <CardDescription>{t("profile.salonInfoDesc")}</CardDescription>
               </div>
               <div className="flex space-x-2">
                 <Button
@@ -420,7 +450,7 @@ const ProfilePage = () => {
                   disabled={loadingSalonData}
                 >
                   <Activity className="h-4 w-4 mr-2" />
-                  Refresh
+                  {t("common.refresh")}
                 </Button>
                 <Button
                   onClick={() => setIsEditingSalon(!isEditingSalon)}
@@ -429,7 +459,7 @@ const ProfilePage = () => {
                   disabled={loadingSalonData}
                 >
                   <Edit className="h-4 w-4" />
-                  <span>{isEditingSalon ? "Cancel" : "Edit"}</span>
+                  <span>{isEditingSalon ? t("common.cancel") : t("common.edit")}</span>
                 </Button>
               </div>
             </div>
@@ -437,7 +467,7 @@ const ProfilePage = () => {
           <CardContent className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="salon-name">Salon Name</Label>
+                <Label htmlFor="salon-name">{t("profile.salonName")}</Label>
                 <Input
                   id="salon-name"
                   value={profile.salon.name}
@@ -452,7 +482,7 @@ const ProfilePage = () => {
               </div>
 
               <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="salon-address">Address</Label>
+                <Label htmlFor="salon-address">{t("profile.address")}</Label>
                 <Input
                   id="salon-address"
                   value={profile.salon.address}
@@ -468,7 +498,7 @@ const ProfilePage = () => {
 
               {/* Salon Code (Read-only) */}
               <div className="space-y-2">
-                <Label htmlFor="salon-code">Salon Code</Label>
+                <Label htmlFor="salon-code">{t("profile.salonCode")}</Label>
                 <Input
                   id="salon-code"
                   value={salonData?.code || ""}
@@ -479,12 +509,12 @@ const ProfilePage = () => {
 
               {/* Salon Status */}
               <div className="space-y-2">
-                <Label htmlFor="salon-status">Status</Label>
+                <Label htmlFor="salon-status">{t("profile.status")}</Label>
                 <div className="flex items-center space-x-2">
                   <Badge
                     variant={salonData?.is_active ? "default" : "secondary"}
                   >
-                    {salonData?.is_active ? "Active" : "Inactive"}
+                    {salonData?.is_active ? t("common.active") : t("common.inactive")}
                   </Badge>
                 </div>
               </div>
@@ -496,10 +526,10 @@ const ProfilePage = () => {
                   variant="outline"
                   onClick={() => setIsEditingSalon(false)}
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
                 <Button onClick={handleSaveSalon} disabled={loadingSalon}>
-                  {loadingSalon ? "Saving..." : "Save Changes"}
+                  {loadingSalon ? t("common.saving") : t("common.saveChanges")}
                 </Button>
               </div>
             )}
@@ -513,11 +543,9 @@ const ProfilePage = () => {
               <div>
                 <CardTitle className="flex items-center space-x-2">
                   <Key className="h-5 w-5" />
-                  <span>Security Settings</span>
+                  <span>{t("profile.security")}</span>
                 </CardTitle>
-                <CardDescription>
-                  Manage your password and security preferences
-                </CardDescription>
+                <CardDescription>{t("profile.securityDesc")}</CardDescription>
               </div>
               <Button
                 onClick={() => setIsEditingSecurity(!isEditingSecurity)}
@@ -525,13 +553,13 @@ const ProfilePage = () => {
                 variant={isEditingSecurity ? "outline" : "default"}
               >
                 <Edit className="h-4 w-4" />
-                <span>{isEditingSecurity ? "Cancel" : "Edit"}</span>
+                <span>{isEditingSecurity ? t("common.cancel") : t("common.edit")}</span>
               </Button>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="current-password">Current Password</Label>
+              <Label htmlFor="current-password">{t("profile.currentPassword")}</Label>
               <div className="relative">
                 <Input
                   id="current-password"
@@ -560,7 +588,7 @@ const ProfilePage = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="new-password">New Password</Label>
+              <Label htmlFor="new-password">{t("profile.newPassword")}</Label>
               <Input
                 id="new-password"
                 type="password"
@@ -585,7 +613,7 @@ const ProfilePage = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirm-password">Confirm New Password</Label>
+              <Label htmlFor="confirm-password">{t("profile.confirmPassword")}</Label>
               <Input
                 id="confirm-password"
                 type="password"
@@ -607,7 +635,7 @@ const ProfilePage = () => {
                     setConfirmPassword("");
                   }}
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
                 <Button
                   onClick={handlePasswordChange}
@@ -619,7 +647,7 @@ const ProfilePage = () => {
                     newPassword.length < 6
                   }
                 >
-                  {loadingSecurity ? "Changing Password..." : "Change Password"}
+                  {loadingSecurity ? t("profile.changingPassword") : t("profile.changePassword")}
                 </Button>
               </div>
             )}

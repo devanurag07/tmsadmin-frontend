@@ -42,7 +42,7 @@ export function SalonAnalysisOverview({ kind }: SalonAnalysisOverviewProps) {
         </span>
       </div>
 
-      <DashboardFilters filters={filters} onChange={setFilters} hideService />
+      <DashboardFilters filters={filters} onChange={setFilters} />
 
       {loading ? (
         <LoadingState message={`Loading ${kind} aggregates...`} />
