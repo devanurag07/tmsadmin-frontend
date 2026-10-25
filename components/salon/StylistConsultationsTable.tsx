@@ -18,7 +18,7 @@ interface StylistConsultationsTableProps {
 
 /** Unique customers and consultations per stylist for the dashboard's active date filter. */
 export function StylistConsultationsTable({ rows }: StylistConsultationsTableProps) {
-  const totalCustomers = rows.reduce((sum, row) => sum + row.unique_customers, 0);
+  const totalCustomers = rows.reduce((sum, row) => sum + (row.unique_customers ?? 0), 0);
   const totalConsultations = rows.reduce((sum, row) => sum + row.consultations, 0);
 
   return (
