@@ -11,6 +11,7 @@ import { DashboardFilters } from "@/components/salon/DashboardFilters";
 import { VtoSection } from "@/components/salon/VtoSection";
 import { ServiceTrendsSection } from "@/components/salon/ServiceTrendsSection";
 import { ServiceAnalysisSection } from "@/components/salon/ServiceAnalysisSection";
+import { StylistConsultationsTable } from "@/components/salon/StylistConsultationsTable";
 import { useSalonDashboard } from "@/hooks/useSalonDashboard";
 import {
   DEFAULT_SALON_FILTERS,
@@ -75,6 +76,10 @@ export default function UsagePage() {
         <StatCard label="Total Customers" value={summary.total_customers} icon={Users} accent="#6366f1" />
         <StatCard label="Total Sessions" value={summary.total_sessions} icon={Zap} accent="#8b5cf6" />
       </div>
+
+      {data.stylist_consultations && data.stylist_consultations.length > 0 ? (
+        <StylistConsultationsTable rows={data.stylist_consultations} />
+      ) : null}
 
       <ServiceTrendsSection
         vto={lifetimeVto ?? virtual_tryon}

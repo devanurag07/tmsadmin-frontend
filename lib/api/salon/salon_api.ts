@@ -11,6 +11,7 @@ export interface SalonData {
     logo_image: string;
     screensaver_video?: string;
     show_pricing?: boolean;
+    show_hairstylists?: boolean;
     homepage_welcome_text?: string;
     homepage_doodle_image?: string;
     theme_primary_color?: string;
@@ -24,6 +25,7 @@ export interface UpdateSalonData {
     address?: string;
     screensaver_video?: string;
     show_pricing?: boolean;
+    show_hairstylists?: boolean;
     homepage_welcome_text?: string;
     homepage_doodle_image?: string;
     theme_primary_color?: string;
@@ -226,6 +228,41 @@ export const updateSalonShowPricing = async (
         success: false,
         status: 400,
         message: "Failed to update pricing setting",
+        data: null,
+    };
+};
+
+/** Persist whether the mirror kiosk asks for the stylist before each consultation. */
+export const updateSalonShowStylists = async (
+    showStylists: boolean
+): Promise<ApiResponse<SalonData | null>> => {
+    try {
+        const response = await api.post("/salon/current", {
+            show_hairstylists: showStylists,
+        });
+
+        if (response.status === 200) {
+            return {
+                success: true,
+                status: response.status,
+                message: response.data.message,
+                data: response.data.data,
+            };
+        }
+    } catch (error) {
+        console.log(error);
+        return {
+            success: false,
+            status: 400,
+            message: "Failed to update stylist setting",
+            data: null,
+        };
+    }
+
+    return {
+        success: false,
+        status: 400,
+        message: "Failed to update stylist setting",
         data: null,
     };
 };

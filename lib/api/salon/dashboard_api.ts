@@ -108,6 +108,14 @@ export interface ServiceAnalytics {
   deep_analysis_count?: number;
 }
 
+export interface StylistConsultations {
+  stylist_id: number;
+  name: string;
+  /** False when the stylist was removed but has consultations in the window. */
+  is_active: boolean;
+  consultations: number;
+}
+
 export interface SalonDashboard {
   salon: SalonInfo;
   summary: SalonSummary;
@@ -116,6 +124,8 @@ export interface SalonDashboard {
   hair_analysis: ServiceAnalytics;
   /** Last 12 months of results per service (VTO / skin / hair). */
   monthly_trend?: { label: string; vto: number; skin: number; hair: number; total: number }[];
+  /** Kiosk consultations per stylist; empty when the salon has no stylists. */
+  stylist_consultations?: StylistConsultations[];
 }
 
 export const fetchSalonDashboard = async (

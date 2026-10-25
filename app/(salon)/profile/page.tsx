@@ -38,6 +38,7 @@ import Image from "next/image";
 import { upload_logo_image } from "@/lib/api/products/upload_image";
 import { ScreensaverVideoSection } from "@/components/salon/ScreensaverVideoSection";
 import { PricingToggleSection } from "@/components/salon/PricingToggleSection";
+import { StylistsSection } from "@/components/salon/StylistsSection";
 import { HomepageCustomizationSection } from "@/components/salon/HomepageCustomizationSection";
 
 // Types for profile data
@@ -405,6 +406,16 @@ const ProfilePage = () => {
         onChange={(enabled) =>
           setSalonData((prev) =>
             prev ? { ...prev, show_pricing: enabled } : prev
+          )
+        }
+        disabled={loadingSalonData || !salonData}
+      />
+
+      <StylistsSection
+        value={salonData?.show_hairstylists === true}
+        onChange={(enabled) =>
+          setSalonData((prev) =>
+            prev ? { ...prev, show_hairstylists: enabled } : prev
           )
         }
         disabled={loadingSalonData || !salonData}
