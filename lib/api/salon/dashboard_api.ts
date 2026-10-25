@@ -111,8 +111,11 @@ export interface ServiceAnalytics {
 export interface StylistConsultations {
   stylist_id: number;
   name: string;
-  /** False when the stylist was removed but has consultations in the window. */
+  /** False when the stylist was removed but has customers in the window. */
   is_active: boolean;
+  /** Kiosk sessions: one per customer photo. */
+  unique_customers: number;
+  /** Results in those sessions: each try-on, skin or hair analysis. */
   consultations: number;
 }
 
