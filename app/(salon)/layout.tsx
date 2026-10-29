@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { X, Activity, Camera, FileImage, Users, User, Scissors, ShoppingCart, Menu, Sparkles } from "lucide-react";
+import { X, Activity, Camera, FileImage, Users, User, Scissors, ShoppingCart, Menu, Sparkles, Wand2 } from "lucide-react";
 import logoWhite from "@/assets/logo/logo_white.webp";
 import Image from "next/image";
 import { useTranslation } from "@/lib/i18n/language-provider";
@@ -14,6 +14,7 @@ const navigation: { key: TranslationKey; href: string; icon: typeof Activity }[]
   { key: "nav.vtoData", href: "/data", icon: Camera },
   { key: "nav.products", href: "/products", icon: ShoppingCart },
   { key: "nav.services", href: "/services", icon: Sparkles },
+  { key: "nav.hairstyles", href: "/hairstyles", icon: Wand2 },
   { key: "nav.skinAnalysis", href: "/skin-analysis", icon: Users },
   { key: "nav.hairAnalysis", href: "/hair-analysis", icon: Scissors },
   { key: "nav.profile", href: "/profile", icon: User },

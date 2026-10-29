@@ -24,6 +24,7 @@ const en = {
   "nav.vtoData": "Customer-wise VTO Data",
   "nav.products": "Products",
   "nav.services": "Services",
+  "nav.hairstyles": "Custom Hairstyles",
   "nav.skinAnalysis": "Skin Analysis",
   "nav.hairAnalysis": "Hair Analysis",
   "nav.profile": "Profile",
@@ -121,6 +122,8 @@ const en = {
   "services.male": "Male",
   "services.female": "Female",
   "services.unisex": "Unisex",
+  "hairstyles.title": "Custom Hairstyles",
+  "hairstyles.subtitle": "Upload your own hairstyles. Customers see them on the mirror alongside the default hairstyle catalogue.",
 };
 
 export type TranslationKey = keyof typeof en;
